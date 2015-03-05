@@ -3,12 +3,16 @@ unit WebUpdate.GUI.About;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls;
+  Windows,
+  Classes,
+  Controls,
+  Forms,
+  StdCtrls,
+  ExtCtrls,
+  Graphics;
 
 type
-  TFormAbout = class(TForm)
+  TfrmAbout = class(TForm)
     ImageHeader: TImage;
     LabelAnd: TLabel;
     LabelComma1: TLabel;
@@ -39,39 +43,39 @@ implementation
 {$R *.dfm}
 
 uses
-  WinApi.ShellApi;
+  ShellApi;
 
 procedure OpenLink(const URL: string);
 begin
   ShellExecute(0, 'open', PChar(URL), nil, nil, SW_SHOWDEFAULT)
 end;
 
-procedure TFormAbout.LabelDWSClick(Sender: TObject);
+procedure TfrmAbout.LabelDWSClick(Sender: TObject);
 begin
   OpenLink('http://www.delphitools.info/dwscript/');
 end;
 
-procedure TFormAbout.LabelIndyClick(Sender: TObject);
+procedure TfrmAbout.LabelIndyClick(Sender: TObject);
 begin
   OpenLink('http://www.indyproject.org/');
 end;
 
-procedure TFormAbout.LabelJEDIClick(Sender: TObject);
+procedure TfrmAbout.LabelJEDIClick(Sender: TObject);
 begin
   OpenLink('http://www.delphi-jedi.org/');
 end;
 
-procedure TFormAbout.LabelVirtualTreeviewClick(Sender: TObject);
+procedure TfrmAbout.LabelVirtualTreeviewClick(Sender: TObject);
 begin
   OpenLink('http://www.jam-software.com/virtual-treeview/');
 end;
 
-procedure TFormAbout.RadioButtonLicenseLGPLClick(Sender: TObject);
+procedure TfrmAbout.RadioButtonLicenseLGPLClick(Sender: TObject);
 begin
   MemoLGPL.BringToFront;
 end;
 
-procedure TFormAbout.RadioButtonLicenseMITClick(Sender: TObject);
+procedure TfrmAbout.RadioButtonLicenseMITClick(Sender: TObject);
 begin
   MemoMIT.BringToFront;
 end;

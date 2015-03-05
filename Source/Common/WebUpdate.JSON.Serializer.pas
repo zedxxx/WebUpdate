@@ -3,169 +3,112 @@ unit WebUpdate.JSON.Serializer;
 interface
 
 uses
-  System.SysUtils, dwsJSON;
+  SysUtils,
+  SynCommons,
+  mORMot;
 
 type
   EJsonSerializer = class(Exception);
 
-  TJsonSerializer = class
+  TJsonSerializer = class(TObject)
+  private
+    procedure LoadFromStringInternal(AJson: PUTF8Char);
   protected
-    procedure Read(Root: TdwsJSONObject); virtual;
-    procedure Write(Root: TdwsJSONObject); virtual;
+    FOptions: TTextWriterWriteObjectOptions;
+    FObjectListItemClass: TClass;
+    procedure OnBeforeLoad; virtual;
+    procedure OnBeforeSave; virtual;
   public
-    class function GetID: string; virtual;
-
-    procedure LoadFromFile(const FileName: TFileName);
-    procedure SaveToFile(const FileName: TFileName);
-
-    procedure LoadFromString(const Text: string);
+    constructor Create(const AItemsClass: TClass = nil);
+  public
+    procedure LoadFromString(const AText: string);
     function SaveToString: string;
+    procedure LoadFromFile(const AFileName: TFileName);
+    procedure SaveToFile(const AFileName: TFileName);
+  public
+    class procedure RegisterClassForJSON(AItemClass: TClass);
   end;
-
-function DateTimeToISO8601(DateTime: TDateTime): string;
-function ISO8601ToDateTime(const Value: string): TDateTime;
 
 implementation
 
-uses
-  dwsXPlatform;
-
-function DateTimeToISO8601(DateTime: TDateTime): string;
-begin
-  Result := FormatDateTime('yyyy-mm-dd"' + 'T' + '"hh":"mm":"ss.zzz', DateTime);
-end;
-
-function ISO8601ToDateTime(const Value: string): TDateTime;
-
-  function Str2Time(s: string): TDateTime;
-  var
-    Hour, Minute, MSec, Second: Word;
-    Temp: Integer;
-  begin
-    s := Trim(s);
-    if s = '' then
-      Result := 0
-    else
-    begin
-      Temp := Pos(':', s);
-      Hour := StrToInt(Copy(s, 1, Temp - 1));
-      Delete(s, 1, Temp);
-      Temp := Pos(':', s);
-      Minute := StrToInt(Copy(s, 1, Temp - 1));
-      Delete(s, 1, Temp);
-      Temp := Pos('.', s);
-      if Temp > 0 then
-      begin
-        MSec := StrToInt(Copy(s, Temp + 1, Length(s) - Temp));
-        Delete(s, Temp, Length(s) - Temp + 1);
-      end
-      else
-        MSec := 0;
-      Second := StrToInt(s);
-      Result := EncodeTime(Hour, Minute, Second, MSec);
-    end;
-  end;
-
-var
-  Day, Month, Year: Word;
-  Temp: Integer;
-  DateStr, TimeStr: string;
-begin
-  // check for a value (At all)
-  if Value = '' then
-    Exit(0);
-
-  Temp := Pos ('T', Value);
-  // detect all known date/time formats
-  if (Temp = 0) and (Pos('-', Value) > 0) then
-    Temp := Length(Value) + 1;
-  DateStr := Trim(Copy(Value, 1, Temp - 1));
-  TimeStr := Trim(Copy(Value, Temp + 1, Length(Value) - Temp));
-  Result := 0;
-  if DateStr <> '' then
-  begin
-    Temp := Pos ('-', DateStr);
-    Year := StrToInt(Copy(DateStr, 1, Temp - 1));
-    Delete(DateStr, 1, Temp);
-    Temp := Pos ('-', DateStr);
-    Month := StrToInt(Copy(DateStr, 1, Temp - 1));
-    Day := StrToInt(Copy(DateStr, Temp + 1, Length(DateStr) - Temp));
-    Result := EncodeDate(Year, Month, Day);
-  end;
-  Result := Result + Frac(Str2Time(TimeStr));
-end;
-
+resourcestring
+  rsInvalidJSON = '%s - Invalid JSON string';
+  rsFileNameIsEmpty = '%s - FileName is empty';
+  rsFileNotExists = '%s - File not exists: %s';
+  rsFileIsEmpty = '%s - File is empty: %s';
 
 { TJsonSerializer }
 
-class function TJsonSerializer.GetID: string;
+constructor TJsonSerializer.Create(const AItemsClass: TClass);
 begin
-  Result := '';
+  inherited Create;
+  FObjectListItemClass := AItemsClass;
+  FOptions := [woHumanReadable, woStoreClassName];
 end;
 
-procedure TJsonSerializer.LoadFromFile(const FileName: TFileName);
+procedure TJsonSerializer.LoadFromStringInternal(AJson: PUTF8Char);
 var
-  Root: TdwsJSONValue;
+  VIsValidJson: Boolean;
 begin
-  // check if file exists
-  if not FileExists(FileName) then
-    raise Exception.CreateFmt('File %s does not exist!', [FileName]);
-
-  // parse JSON file
-  Root := TdwsJSONValue.ParseFile(FileName);
-
-  // ensure the JSON file is an object
-  if not (Root is TdwsJSONObject) then
-    raise EJsonSerializer.Create('Object expected');
-
-  Read(TdwsJSONObject(Root));
+  OnBeforeLoad;
+  JSONToObject(Self, AJson, VIsValidJson, FObjectListItemClass);
+  if not VIsValidJson then begin
+    raise EJsonSerializer.CreateFmt(rsInvalidJSON, [Self.ClassName]);
+  end;
 end;
 
-procedure TJsonSerializer.SaveToFile(const FileName: TFileName);
+procedure TJsonSerializer.LoadFromString(const AText: string);
 var
-  Root: TdwsJSONObject;
+  VJson: RawUTF8;
 begin
-  Root := TdwsJSONObject.Create;
-  Write(Root);
-
-  SaveTextToUTF8File(FileName, Root.ToBeautifiedString);
+  //SetString(VJson, PAnsiChar(AText), Length(AText));
+  VJson := StringToUTF8(AText);
+  LoadFromStringInternal(PUTF8Char(VJson));
 end;
 
-procedure TJsonSerializer.LoadFromString(const Text: string);
+procedure TJsonSerializer.LoadFromFile(const AFileName: TFileName);
 var
-  Root: TdwsJSONValue;
+  VJson: RawUTF8;
 begin
-  Root := TdwsJSONValue.ParseString(Text);
-
-  if not (Root is TdwsJSONObject) then
-    raise EJsonSerializer.Create('Object expected');
-
-  Read(TdwsJSONObject(Root));
+  if AFileName = '' then begin
+    raise EJsonSerializer.CreateFmt(rsFileNameIsEmpty, [Self.ClassName]);
+  end;
+  if not FileExists(AFileName) then begin
+    raise EJsonSerializer.CreateFmt(rsFileNotExists, [Self.ClassName, AFileName]);
+  end;
+  VJson := AnyTextFileToRawUTF8(AFileName, True);
+  if VJson <> '' then begin
+    LoadFromStringInternal(PUTF8Char(VJson));
+  end else begin
+    raise EJsonSerializer.CreateFmt(rsFileIsEmpty, [Self.ClassName, AFileName]);
+  end;
 end;
 
 function TJsonSerializer.SaveToString: string;
-var
-  Root: TdwsJSONObject;
 begin
-  Root := TdwsJSONObject.Create;
-  Write(Root);
-
-  Result := Root.ToBeautifiedString;
+  OnBeforeSave;
+  Result := UTF8ToString(ObjectToJson(Self, FOptions));
 end;
 
-procedure TJsonSerializer.Read(Root: TdwsJSONObject);
+procedure TJsonSerializer.SaveToFile(const AFileName: TFileName);
 begin
-  // eventually check ID
-  if GetID <> '' then
-    if not (Root.Items['ID'].AsString = GetID) then
-      raise EJsonSerializer.Create('ID mismatch');
+  OnBeforeSave;
+  ObjectToJSONFile(Self, AFileName, FOptions);
 end;
 
-procedure TJsonSerializer.Write(Root: TdwsJSONObject);
+class procedure TJsonSerializer.RegisterClassForJSON(AItemClass: TClass);
 begin
-  // eventually set ID
-  if GetID <> '' then
-    Root.AddValue('ID').AsString := GetID;
+  mORMot.TJSONSerializer.RegisterClassForJSON(AItemClass);
+end;
+
+procedure TJsonSerializer.OnBeforeLoad;
+begin
+  // virtual
+end;
+
+procedure TJsonSerializer.OnBeforeSave;
+begin
+  // virtual
 end;
 
 end.

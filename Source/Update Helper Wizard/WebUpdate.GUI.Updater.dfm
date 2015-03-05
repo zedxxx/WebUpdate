@@ -1,29 +1,78 @@
 object FormWebUpdate: TFormWebUpdate
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Web Update'
-  ClientHeight = 260
-  ClientWidth = 406
+  ClientHeight = 331
+  ClientWidth = 458
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -12
-  Font.Name = 'Segoe UI'
+  Font.Height = -11
+  Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
+  OldCreateOrder = True
+  Position = poDesktopCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
-  TextHeight = 15
+  TextHeight = 13
   object PageControl: TPageControl
     Left = 0
-    Top = 47
-    Width = 406
-    Height = 177
+    Top = 41
+    Width = 458
+    Height = 256
     ActivePage = TabProgress
     Align = alClient
     Style = tsFlatButtons
     TabOrder = 0
+    object TabSelectChannel: TTabSheet
+      Caption = 'Select Channel'
+      TabVisible = False
+      OnShow = TabSelectChannelShow
+      object LabelSelectChannel: TLabel
+        Left = 12
+        Top = 14
+        Width = 82
+        Height = 13
+        Caption = 'Select a channel:'
+      end
+      object RadioButtonStable: TRadioButton
+        Left = 36
+        Top = 39
+        Width = 198
+        Height = 15
+        Caption = 'Update to latest stable version'
+        Checked = True
+        TabOrder = 0
+        TabStop = True
+        OnClick = RadioButtonChannelClick
+      end
+      object RadioButtonAlternative: TRadioButton
+        Left = 36
+        Top = 59
+        Width = 198
+        Height = 15
+        Caption = 'Update against alternative channel'
+        TabOrder = 1
+        OnClick = RadioButtonChannelClick
+      end
+      object ComboBoxChannels: TComboBox
+        Left = 62
+        Top = 79
+        Width = 91
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        ItemIndex = 0
+        TabOrder = 2
+        Text = 'Stable'
+        Visible = False
+        Items.Strings = (
+          'Stable'
+          'Nightly')
+      end
+    end
     object TabFileList: TTabSheet
       Caption = 'File List'
       ImageIndex = 3
@@ -32,104 +81,47 @@ object FormWebUpdate: TFormWebUpdate
       object LabelFileList: TLabel
         Left = 3
         Top = 2
-        Width = 42
-        Height = 15
+        Width = 39
+        Height = 13
         Caption = 'File List:'
       end
       object TreeFiles: TVirtualStringTree
         Left = 0
-        Top = 23
-        Width = 398
-        Height = 144
+        Top = 18
+        Width = 450
+        Height = 228
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
+        DefaultNodeHeight = 19
         Header.AutoSizeIndex = 0
+        Header.DefaultHeight = 16
         Header.Font.Charset = DEFAULT_CHARSET
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'Tahoma'
         Header.Font.Style = []
+        Header.Height = 16
         Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible, hoAutoSpring]
         Images = ImageList
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toThemeAware, toUseBlendedImages]
-        OnGetText = TreeFilesGetText
         OnGetImageIndex = TreeFilesGetImageIndex
         Columns = <
           item
             Position = 0
-            Width = 193
+            Width = 272
             WideText = 'Name'
           end
           item
             Position = 1
-            Width = 120
+            Width = 104
             WideText = 'Last Modified'
           end
           item
             Position = 2
-            Width = 81
+            Width = 70
             WideText = 'Size'
           end>
-      end
-    end
-    object TabSelectChannel: TTabSheet
-      Caption = 'Select Channel'
-      TabVisible = False
-      OnShow = TabSelectChannelShow
-      object LabelSelectChannel: TLabel
-        Left = 14
-        Top = 16
-        Width = 88
-        Height = 15
-        Caption = 'Select a channel:'
-      end
-      object RadioButtonStable: TRadioButton
-        Left = 41
-        Top = 45
-        Width = 229
-        Height = 17
-        Caption = 'Update to latest stable version'
-        Checked = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        TabStop = True
-        OnClick = RadioButtonChannelClick
-      end
-      object RadioButtonAlternative: TRadioButton
-        Left = 41
-        Top = 68
-        Width = 229
-        Height = 17
-        Caption = 'Update against alternative channel'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        OnClick = RadioButtonChannelClick
-      end
-      object ComboBoxChannels: TComboBox
-        Left = 72
-        Top = 91
-        Width = 105
-        Height = 23
-        Style = csDropDownList
-        ItemIndex = 0
-        TabOrder = 2
-        Text = 'Beta'
-        Visible = False
-        Items.Strings = (
-          'Beta'
-          'Alpha'
-          'Nightly')
       end
     end
     object TabProgress: TTabSheet
@@ -138,55 +130,55 @@ object FormWebUpdate: TFormWebUpdate
       TabVisible = False
       OnShow = TabProgressShow
       DesignSize = (
-        398
-        167)
+        450
+        246)
       object LabelTotalStatus: TLabel
         Left = 3
         Top = 3
         Width = 35
-        Height = 15
+        Height = 13
         Caption = 'Status:'
       end
       object LabelCurrentFile: TLabel
         Left = 3
-        Top = 75
-        Width = 62
-        Height = 15
+        Top = 65
+        Width = 58
+        Height = 13
         Caption = 'Current file:'
       end
       object LabelRemainingTime: TLabel
-        Left = 191
-        Top = 41
-        Width = 204
-        Height = 15
+        Left = 257
+        Top = 36
+        Width = 191
+        Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Time remaining: xx hour, xx min, xx sec'
         Visible = False
       end
-      object LabelSpeed: TLabel
-        Left = 313
-        Top = 113
-        Width = 82
-        Height = 15
+      object lblBytesProgress: TLabel
+        Left = 295
+        Top = 98
+        Width = 153
+        Height = 13
         Alignment = taRightJustify
         Anchors = [akLeft, akTop, akRight]
-        Caption = 'Speed: 100 kb/s'
+        Caption = 'Total: xx.xx of xx.xx (xx.xx%)'
         Visible = False
       end
       object ProgressBarTotal: TProgressBar
         Left = 3
-        Top = 19
-        Width = 392
-        Height = 16
+        Top = 16
+        Width = 445
+        Height = 14
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 0
       end
       object ProgressBarCurrent: TProgressBar
         Left = 3
-        Top = 91
-        Width = 392
-        Height = 16
+        Top = 79
+        Width = 445
+        Height = 14
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
       end
@@ -197,17 +189,17 @@ object FormWebUpdate: TFormWebUpdate
       TabVisible = False
       OnShow = TabSummaryShow
       object LabelSummary: TLabel
-        Left = 14
-        Top = 16
-        Width = 94
-        Height = 15
+        Left = 12
+        Top = 14
+        Width = 85
+        Height = 13
         Caption = 'Update complete!'
       end
       object CheckBoxStartApplication: TCheckBox
-        Left = 142
-        Top = 74
-        Width = 115
-        Height = 17
+        Left = 123
+        Top = 64
+        Width = 100
+        Height = 15
         Caption = 'Start Application'
         TabOrder = 0
       end
@@ -216,8 +208,8 @@ object FormWebUpdate: TFormWebUpdate
   object PanelHeader: TPanel
     Left = 0
     Top = 0
-    Width = 406
-    Height = 47
+    Width = 458
+    Height = 41
     Align = alTop
     BevelEdges = [beBottom]
     BevelKind = bkSoft
@@ -226,24 +218,23 @@ object FormWebUpdate: TFormWebUpdate
     ParentBackground = False
     TabOrder = 1
     object LabelHeader: TLabel
-      Left = 45
-      Top = 9
-      Width = 116
-      Height = 25
+      Left = 39
+      Top = 8
+      Width = 104
+      Height = 23
       Caption = 'Web Update'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -21
+      Font.Height = -19
       Font.Name = 'Tahoma'
       Font.Style = []
-      Font.Quality = fqAntialiased
       ParentFont = False
     end
     object ImageHeader: TImage
-      Left = 7
-      Top = 5
-      Width = 32
-      Height = 32
+      Left = 6
+      Top = 4
+      Width = 28
+      Height = 28
       Picture.Data = {
         055449636F6E0000010004001818000001002000880900004600000020200000
         01002000A8100000CE090000101000000100200068040000761A000016160000
@@ -561,21 +552,20 @@ object FormWebUpdate: TFormWebUpdate
   end
   object PanelControl: TPanel
     Left = 0
-    Top = 224
-    Width = 406
-    Height = 36
+    Top = 297
+    Width = 458
+    Height = 34
     Align = alBottom
     BevelEdges = [beTop]
     BevelKind = bkTile
     BevelOuter = bvNone
-    ShowCaption = False
     TabOrder = 2
     object ButtonClose: TButton
       AlignWithMargins = True
-      Left = 327
+      Left = 369
       Top = 4
-      Width = 75
-      Height = 26
+      Width = 85
+      Height = 24
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -587,10 +577,10 @@ object FormWebUpdate: TFormWebUpdate
     end
     object ButtonNext: TButton
       AlignWithMargins = True
-      Left = 244
+      Left = 276
       Top = 4
-      Width = 75
-      Height = 26
+      Width = 85
+      Height = 24
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -603,11 +593,10 @@ object FormWebUpdate: TFormWebUpdate
     end
   end
   object ImageList: TImageList
-    ColorDepth = cd32Bit
     Left = 360
     Top = 8
     Bitmap = {
-      494C010104000900040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010104000900080010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

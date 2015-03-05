@@ -1,66 +1,204 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectGuid>{5ead0d9d-a663-43d5-9bc4-4fd009b256a0}</ProjectGuid>
-    <MainSource>Updater.dpr</MainSource>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>Updater.exe</DCC_DependencyCheckOutputName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Version>7.0</Version>
-    <DCC_DebugInformation>False</DCC_DebugInformation>
-    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
-    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-    <DCC_Define>RELEASE</DCC_Define>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Version>7.0</Version>
-    <DCC_Define>DEBUG</DCC_Define>
-  </PropertyGroup>
-  <ProjectExtensions>
-    <Borland.Personality>Delphi.Personality</Borland.Personality>
-    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
-    <BorlandProject>
-<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">False</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">0</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName"></VersionInfoKeys><VersionInfoKeys Name="FileDescription"></VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dcldb100.bpl">CodeGear Database Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclnet100.bpl">CodeGear Internet Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dbx100.bpl">CodeGear SQL Explorer UI Package</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclmid100.bpl">CodeGear MyBase DataAccess Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dcldbx4100.bpl">CodeGear dbExpress Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclwbm100.bpl">CodeGear InternetExpress Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclbde100.bpl">CodeGear BDE DB Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclmlwiz100.bpl">CodeGear Markup Language Wizards</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclmcn100.bpl">CodeGear DataSnap Connection Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dcltee7100.bpl">TeeChart Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclado100.bpl">CodeGear ADO DB Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dcldbxcds4100.bpl">CodeGear SimpleDataset Component (DBX)</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclie100.bpl">Internet Explorer Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclwebsnap100.bpl">CodeGear WebSnap Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\bin\dclsoap100.bpl">CodeGear SOAP Components</Excluded_Packages>
-      <Excluded_Packages Name="$(BDS)\Bin\dclib100.bpl">Borland InterBase Express Components</Excluded_Packages>
-    </Excluded_Packages><Source><Source Name="MainSource">Updater.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
-  </ProjectExtensions>
-  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
-  <ItemGroup>
-    <DelphiCompile Include="Updater.dpr">
-      <MainSource>MainSource</MainSource>
-    </DelphiCompile>
-    <DCCReference Include="..\..\Utils\ArgumentParser.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Classes.FileItem.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Classes.Updater.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Classes.UpdaterThread.pas" />
-    <DCCReference Include="..\Common\WebUpdate.JSON.Channel.pas" />
-    <DCCReference Include="..\Common\WebUpdate.JSON.Channels.pas" />
-    <DCCReference Include="..\Common\WebUpdate.JSON.Serializer.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Network.Downloader.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Network.DownloaderFactory.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Network.DownloaderIndy.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Tools.pas" />
-    <DCCReference Include="..\Common\WebUpdate.Tools.Windows.pas" />
-    <DCCReference Include="Updater.CmdLine.Processor.pas" />
-  </ItemGroup>
-</Project>
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{2AD69CCE-006B-45F1-A5F5-7763D22A0AB9}</ProjectGuid>
+			<ProjectVersion>13.4</ProjectVersion>
+			<FrameworkType>VCL</FrameworkType>
+			<MainSource>UpdaterWizard.dpr</MainSource>
+			<Base>True</Base>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Platform Condition="'$(Platform)'==''">Win32</Platform>
+			<TargetedPlatforms>3</TargetedPlatforms>
+			<AppType>Application</AppType>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+			<Base_Win64>true</Base_Win64>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+			<Base_Win32>true</Base_Win32>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+			<Cfg_1_Win64>true</Cfg_1_Win64>
+			<CfgParent>Cfg_1</CfgParent>
+			<Cfg_1>true</Cfg_1>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+			<Cfg_1_Win32>true</Cfg_1_Win32>
+			<CfgParent>Cfg_1</CfgParent>
+			<Cfg_1>true</Cfg_1>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+			<Cfg_2_Win64>true</Cfg_2_Win64>
+			<CfgParent>Cfg_2</CfgParent>
+			<Cfg_2>true</Cfg_2>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+			<Cfg_2_Win32>true</Cfg_2_Win32>
+			<CfgParent>Cfg_2</CfgParent>
+			<Cfg_2>true</Cfg_2>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<Icon_MainIcon>..\..\Glyphs\WebUpdate.ico</Icon_MainIcon>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+			<Manifest_File>None</Manifest_File>
+			<VerInfo_Locale>1031</VerInfo_Locale>
+			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_UsePackage>fmx;IndySystem;CustomIPTransport;dsnap;IndyCore;fmxase;FmxTeeUI;inetdbxpress;bindcompfmx;rtl;dbrtl;bindcomp;inetdb;xmlrtl;IndyProtocols;bindengine;FMXTee;soaprtl;inet;fmxobj;fmxdae;$(DCC_UsePackage)</DCC_UsePackage>
+			<DCC_DcuOutput>..\..\DCU</DCC_DcuOutput>
+			<DCC_ExeOutput>..\..\Binaries</DCC_ExeOutput>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base_Win64)'!=''">
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_UsePackage>AbbreviaVCL;TeeDB;vclimg;vcldb;vcldsnap;vclribbon;EasyListviewD16;vcl;webdsnap;OmniThreadLibraryRuntimeXE2;GR32_RSXE2;Tee;SynEdit_RXE2;O408_r;vclactnband;TeeUI;bindcompvcl;vclie;vcltouch;websnap;VclSmp;dsnapcon;vclx;MPCommonLibD16;VirtualTreesR;O408br;$(DCC_UsePackage)</DCC_UsePackage>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base_Win32)'!=''">
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<DCC_UsePackage>JvBDE;JvGlobus;fsADO16;AggPasRunXE2;JvMM;JvManagedThreads;AbbreviaVCL;USBDeviceTreePkg;JvDlgs;Alcinoe_d2007;TeeDB;JvCrypt;frxTee16;inetdbbde;frxBDE16;ColorPickerButtonD16;GLScene_RunTime;JvNet;JvDotNetCtrls;PrintPreview;ECXMLParserD160;DIHtmlParser_DXE2;vclimg;fmi;JvXPCtrls;GeckoSDK;vcldb;GLS_Computing_RunTime;vcldsnap;mbColorLibD16;DeHL_Package;ChromeTabs_XE2_R;MetaGraphics_D16;GR32_AddOn_RSXE2;DCEF_XE2;JvCore;frxADO16;vclribbon;frxe16;EasyListviewD16;vcl;ewbrun;fsTee16;GeckoComponents;JvAppFrm;JvDB;hexlicensemgr;DAV_ASIOHost_D16;webdsnap;JvRuntimeDesign;OmniThreadLibraryRuntimeXE2;JclDeveloperTools;GR32_RSXE2;BMSpinEdit;GR32_DSGN_RSXE2;JvDocking;JvWizards;madBasic_;GR32_FreeType_XE2;OpenWirePkgD16;JvHMI;frxDBX16;JvBands;vcldbx;GR32_Controls_D16;frx16;DAV_Common_D16;JvPluginSystem;mrMath;DAV_DSP_D16;MFControls;Tee;JclContainers;dhcomps;JvCmp;madDisAsm_;JvSystem;svnui;JvTimeFramework;SynEdit_RXE2;JvControls;Mitov.Runtime.D16;fsBDE16;frxDB16;DAV_GUI_D16;O408_r;vclactnband;TeeUI;JvJans;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvPageComps;JvPrintPreview;fs16;madExcept_;frxcs16;vcltouch;websnap;ExceptionExpert16;CrossFPC_XE2;VclSmp;fsDB16;DAV_SEHost_D16;DScintillaRuntime;dsnapcon;FlatControls;JclVcl;JvPascalInterpreter;GR32_Charts_D16;vclx;MPCommonLibD16;SuperTrackbar_D16;svn;OPDE;CPortLibDXE2;bdertl;RemObjects_Synapse_D16;ExpertTools;VirtualTreesR;DAV_VSTHost_D16;O408br;$(DCC_UsePackage)</DCC_UsePackage>
+			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+			<DCC_Optimize>false</DCC_Optimize>
+			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+			<DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+			<DCC_RemoteDebug>true</DCC_RemoteDebug>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<DCC_RemoteDebug>false</DCC_RemoteDebug>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+			<DCC_DebugInformation>false</DCC_DebugInformation>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="$(MainSource)">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="..\Common\WebUpdate.Classes.Updater.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.JSON.Serializer.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.JSON.Channel.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.JSON.Channels.pas"/>
+			<DCCReference Include="WebUpdate.GUI.Updater.pas">
+				<Form>FormWebUpdate</Form>
+			</DCCReference>
+			<DCCReference Include="..\Common\WebUpdate.Tools.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.Classes.FileItem.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.Classes.UpdaterThread.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.Network.DownloaderIndy.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.Network.Downloader.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.Network.DownloaderFactory.pas"/>
+			<DCCReference Include="..\Common\WebUpdate.Tools.Windows.pas"/>
+			<DCCReference Include="..\Update Helper (Command-line)\Updater.CmdLine.Processor.pas"/>
+			<DCCReference Include="..\..\Utils\ArgumentParser.pas"/>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Source>
+						<Source Name="MainSource">UpdaterWizard.dpr</Source>
+					</Source>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1031</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
+				</Delphi.Personality>
+				<Deployment/>
+				<Platforms>
+					<Platform value="Win64">True</Platform>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+	</Project>
+
 <!-- EurekaLog First Line
 [Exception Log]
 EurekaLog Version=6104
@@ -69,7 +207,7 @@ Activate Handle=1
 Save Log File=1
 Foreground Tab=0
 Freeze Activate=0
-Freeze Timeout=0
+Freeze Timeout=60
 SMTP From=eurekalog@email.com
 SMTP Host=
 SMTP Port=25
@@ -88,21 +226,21 @@ AutoCloseDialogSecs=0
 WebSendMode=0
 SupportULR=
 HTMLLayout Count=15
-HTMLLine0="%3Chtml%3E"
-HTMLLine1="  %3Chead%3E"
-HTMLLine2="  %3C/head%3E"
-HTMLLine3="  %3Cbody TopMargin=10 LeftMargin=10%3E"
-HTMLLine4="    %3Ctable width="100%%" border="0"%3E"
-HTMLLine5="      %3Ctr%3E"
-HTMLLine6="        %3Ctd nowrap%3E"
-HTMLLine7="          %3Cfont face="Lucida Console, Courier" size="2"%3E"
-HTMLLine8="            %3C%%HTML_TAG%%%3E"
-HTMLLine9="          %3C/font%3E"
-HTMLLine10="        %3C/td%3E"
-HTMLLine11="      %3C/tr%3E"
-HTMLLine12="    %3C/table%3E"
-HTMLLine13="  %3C/body%3E"
-HTMLLine14="%3C/html%3E"
+HTMLLine0="%U003Chtml%U003E"
+HTMLLine1="  %U003Chead%U003E"
+HTMLLine2="  %U003C/head%U003E"
+HTMLLine3="  %U003Cbody TopMargin=10 LeftMargin=10%U003E"
+HTMLLine4="    %U003Ctable width="100%%" border="0"%U003E"
+HTMLLine5="      %U003Ctr%U003E"
+HTMLLine6="        %U003Ctd nowrap%U003E"
+HTMLLine7="          %U003Cfont face="Lucida Console, Courier" size="2"%U003E"
+HTMLLine8="            %U003C%%HTML_TAG%%%U003E"
+HTMLLine9="          %U003C/font%U003E"
+HTMLLine10="        %U003C/td%U003E"
+HTMLLine11="      %U003C/tr%U003E"
+HTMLLine12="    %U003C/table%U003E"
+HTMLLine13="  %U003C/body%U003E"
+HTMLLine14="%U003C/html%U003E"
 AutoCrashOperation=2
 AutoCrashNumber=10
 AutoCrashMinutes=1
@@ -260,21 +398,21 @@ mtDialog_CPUCaption0="CPU"
 Count mtDialog_CPUHeader=1
 mtDialog_CPUHeader0="CPU Information"
 Count mtDialog_OKButtonCaption=1
-mtDialog_OKButtonCaption0="%26OK"
+mtDialog_OKButtonCaption0="%U0026OK"
 Count mtDialog_TerminateButtonCaption=1
-mtDialog_TerminateButtonCaption0="%26Terminate"
+mtDialog_TerminateButtonCaption0="%U0026Terminate"
 Count mtDialog_RestartButtonCaption=1
-mtDialog_RestartButtonCaption0="%26Restart"
+mtDialog_RestartButtonCaption0="%U0026Restart"
 Count mtDialog_DetailsButtonCaption=1
-mtDialog_DetailsButtonCaption0="%26Details"
+mtDialog_DetailsButtonCaption0="%U0026Details"
 Count mtDialog_CustomButtonCaption=1
-mtDialog_CustomButtonCaption0="%26Help"
+mtDialog_CustomButtonCaption0="%U0026Help"
 Count mtDialog_SendMessage=1
-mtDialog_SendMessage0="%26Send this error via Internet"
+mtDialog_SendMessage0="%U0026Send this error via Internet"
 Count mtDialog_ScreenshotMessage=1
-mtDialog_ScreenshotMessage0="%26Attach a Screenshot image"
+mtDialog_ScreenshotMessage0="%U0026Attach a Screenshot image"
 Count mtDialog_CopyMessage=1
-mtDialog_CopyMessage0="%26Copy to Clipboard"
+mtDialog_CopyMessage0="%U0026Copy to Clipboard"
 Count mtDialog_SupportMessage=1
 mtDialog_SupportMessage0="Go to the Support Page"
 Count mtMSDialog_ErrorMsgCaption=1
@@ -296,9 +434,9 @@ mtMSDialog_HowToReproduceCaption0="What were you doing when the problem happened
 Count mtMSDialog_EmailCaption=1
 mtMSDialog_EmailCaption0="Email address (optional):"
 Count mtMSDialog_SendButtonCaption=1
-mtMSDialog_SendButtonCaption0="%26Send Error Report"
+mtMSDialog_SendButtonCaption0="%U0026Send Error Report"
 Count mtMSDialog_NoSendButtonCaption=1
-mtMSDialog_NoSendButtonCaption0="%26Don't Send"
+mtMSDialog_NoSendButtonCaption0="%U0026Don't Send"
 Count mtLog_AppHeader=1
 mtLog_AppHeader0="Application"
 Count mtLog_AppStartDate=1
@@ -476,7 +614,7 @@ mtReproduceDialog_Caption0="Request"
 Count mtReproduceDialog_Request=1
 mtReproduceDialog_Request0="Please describe the steps to reproduce the error:"
 Count mtReproduceDialog_OKButtonCaption=1
-mtReproduceDialog_OKButtonCaption0="%26OK"
+mtReproduceDialog_OKButtonCaption0="%U0026OK"
 Count mtModules_Handle=1
 mtModules_Handle0="Handle"
 Count mtModules_Name=1

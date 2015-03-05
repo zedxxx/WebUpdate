@@ -3,162 +3,104 @@ unit WebUpdate.JSON.Project;
 interface
 
 uses
-  System.SysUtils, dwsJSON, WebUpdate.JSON.Serializer;
+  SysUtils,
+  WebUpdate.JSON.Serializer;
+
+{$METHODINFO ON}
 
 type
   TWebUpdateProject = class(TJsonSerializer)
   type
-    TFTPOptions = class(TJsonSerializer)
+    TFTPOptions = class
     private
       FPassword: string;
       FUsername: string;
       FServer: string;
-    protected
-      procedure Read(Root: TdwsJSONObject); override;
-      procedure Write(Root: TdwsJSONObject); override;
     public
       constructor Create;
-
+    published
       property Server: string read FServer write FServer;
       property Username: string read FUsername write FUsername;
       property Password: string read FPassword write FPassword;
     end;
 
-    TCopyOptions = class(TJsonSerializer)
+    TCopyOptions = class
     private
       FPath: string;
       FEnabled: Boolean;
-    protected
-      procedure Read(Root: TdwsJSONObject); override;
-      procedure Write(Root: TdwsJSONObject); override;
     public
       constructor Create;
-
+    published
       property Path: string read FPath write FPath;
       property Enabled: Boolean read FEnabled write FEnabled;
     end;
-
   private
     FApplicationName: string;
+    FAutoAddNewFiles: Boolean;
     FAutoCopyUpload: Boolean;
     FBaseDirectory: string;
-    FChannelsFilename: TFileName;
+    FChannelsFilename: string;
     FCopyOptions: TCopyOptions;
     FCurrentChannel: string;
     FFtpOptions: TFTPOptions;
     FUseMD5: Boolean;
-    function GetFullChannelsFilename: TFileName;
+    FLocalPath: string;
+    function GetFullChannelsFilename: string;
     function GetBasePath: string;
     function GetChannelsPath: string;
-  protected
-    procedure Read(Root: TdwsJSONObject); override;
-    procedure Write(Root: TdwsJSONObject); override;
+    procedure SetLocalPath(const AValue: string);
   public
     constructor Create;
     destructor Destroy; override;
-
-    class function GetID: string; override;
-
+    property BasePath: string read GetBasePath;
+    property ChannelsPath: string read GetChannelsPath;
+    property FullChannelsFilename: string read GetFullChannelsFilename;
+    property LocalPath: string read FLocalPath write SetLocalPath;
+  published
     property AutoCopyUpload: Boolean read FAutoCopyUpload write FAutoCopyUpload;
+    property AutoAddNewFiles: Boolean read FAutoAddNewFiles write FAutoAddNewFiles;
     property ApplicationName: string read FApplicationName write FApplicationName;
     property BaseDirectory: string read FBaseDirectory write FBaseDirectory;
-    property BasePath: string read GetBasePath;
-    property ChannelsFilename: TFileName read FChannelsFilename write FChannelsFilename;
-    property ChannelsPath: string read GetChannelsPath;
-    property Copy: TCopyOptions read FCopyOptions;
+    property ChannelsFilename: string read FChannelsFilename write FChannelsFilename;
     property ChannelName: string read FCurrentChannel write FCurrentChannel;
-    property FullChannelsFilename: TFileName read GetFullChannelsFilename;
-    property FTP: TFTPOptions read FFtpOptions;
     property UseMD5: Boolean read FUseMD5 write FUseMD5;
+    property FTP: TFTPOptions read FFtpOptions;
+    property Copy: TCopyOptions read FCopyOptions;
   end;
 
 implementation
+
+uses
+  WebUpdate.Tools;
 
 { TWebUpdateProject.TFTPOptions }
 
 constructor TWebUpdateProject.TFTPOptions.Create;
 begin
+  inherited Create;
   FServer := '';
   FUsername := '';
   FPassword := '';
 end;
 
-procedure TWebUpdateProject.TFTPOptions.Read(Root: TdwsJSONObject);
-var
-  Value: TdwsJSONValue;
-begin
-  inherited;
-
-  Value := Root.Items['Server'];
-  if Assigned(Value) then
-    FServer := Value.AsString;
-
-  Value := Root.Items['Username'];
-  if Assigned(Value) then
-    FUsername := Value.AsString;
-
-  Value := Root.Items['Password'];
-  if Assigned(Value) then
-    FPassword := Value.AsString;
-end;
-
-procedure TWebUpdateProject.TFTPOptions.Write(Root: TdwsJSONObject);
-begin
-  inherited;
-
-  if FServer <> '' then
-    Root.AddValue('Server').AsString := FServer;
-
-  if FUsername <> '' then
-    Root.AddValue('Username').AsString := FUsername;
-
-  if FPassword <> '' then
-    Root.AddValue('Password').AsString := FPassword;
-end;
-
-
 { TWebUpdateProject.TCopyOptions }
 
 constructor TWebUpdateProject.TCopyOptions.Create;
 begin
+  inherited Create;
   FPath := '';
   FEnabled := False;
 end;
-
-procedure TWebUpdateProject.TCopyOptions.Read(Root: TdwsJSONObject);
-var
-  Value: TdwsJSONValue;
-begin
-  inherited;
-
-  Value := Root.Items['Path'];
-  if Assigned(Value) then
-    FPath := Value.AsString;
-
-  Value := Root.Items['Enabled'];
-  if Assigned(Value) then
-    FEnabled := Value.AsBoolean;
-end;
-
-procedure TWebUpdateProject.TCopyOptions.Write(Root: TdwsJSONObject);
-begin
-  inherited;
-
-  if FPath <> '' then
-    Root.AddValue('Path').AsString := FPath;
-
-  if FEnabled then
-    Root.AddValue('Enabled').AsBoolean := FEnabled;
-end;
-
 
 { TWebUpdateProject }
 
 constructor TWebUpdateProject.Create;
 begin
+  inherited Create;
   FFtpOptions := TFTPOptions.Create;
   FCopyOptions := TCopyOptions.Create;
   FCurrentChannel := 'Nightly';
+  FLocalPath := '';
 end;
 
 destructor TWebUpdateProject.Destroy;
@@ -168,117 +110,52 @@ begin
   inherited;
 end;
 
+procedure TWebUpdateProject.SetLocalPath(const AValue: string);
+begin
+  FLocalPath := IncludeTrailingPathDelimiter(AValue);
+end;
+
 function TWebUpdateProject.GetBasePath: string;
 begin
-  if FBaseDirectory = '' then
-    Exit('');
-
-  Result := IncludeTrailingPathDelimiter(FBaseDirectory)
+  if FBaseDirectory = '' then begin
+    Result := FLocalPath;
+  end else begin
+    Result := IncludeTrailingPathDelimiter(FBaseDirectory);
+    if IsRelativePath(Result) then begin
+      Result := FLocalPath + Result;
+    end;
+  end;
 end;
 
 function TWebUpdateProject.GetChannelsPath: string;
 begin
-  Result := ExtractFilePath(FChannelsFilename);
+  Result := GetFullChannelsFilename;
+  if Result = '' then begin
+    Result := FLocalPath;
+  end else begin
+    Result := ExtractFilePath(Result);
+    if IsRelativePath(Result) then begin
+      Result := FLocalPath + Result;
+    end;
+  end;
 end;
 
-function TWebUpdateProject.GetFullChannelsFilename: TFileName;
+function TWebUpdateProject.GetFullChannelsFilename: string;
 begin
-  if FChannelsFilename <> '' then
-    if FBaseDirectory <> '' then
-      Result := IncludeTrailingPathDelimiter(FBaseDirectory) + FChannelsFilename
-    else
-      Result := FChannelsFilename
-  else
+  if FChannelsFilename <> '' then begin
+    if FBaseDirectory <> '' then begin
+      Result := IncludeTrailingPathDelimiter(FBaseDirectory) + FChannelsFilename;
+    end else begin
+      Result := FLocalPath + FChannelsFilename;
+    end;
+  end else begin
     Result := '';
-end;
-
-class function TWebUpdateProject.GetID: string;
-begin
-  Result := 'Project';
-end;
-
-procedure TWebUpdateProject.Read(Root: TdwsJSONObject);
-var
-  Value: TdwsJSONValue;
-begin
-  inherited;
-
-  Value := Root.Items['BaseDirectory'];
-  if Assigned(Value) then
-    FBaseDirectory := Value.AsString;
-
-  Value := Root.Items['ChannelFilename'];
-  if Assigned(Value) then
-    FChannelsFilename := Value.AsString;
-
-  Value := Root.Items['CurrentChannel'];
-  if Assigned(Value) then
-    FCurrentChannel := Value.AsString;
-
-  Value := Root.Items['AutoCopyUpload'];
-  if Assigned(Value) then
-    FAutoCopyUpload := Value.AsBoolean;
-
-  Value := Root.Items['ApplicationName'];
-  if Assigned(Value) then
-    FApplicationName := Value.AsString;
-
-  Value := Root.Items['UseMD5'];
-  if Assigned(Value) then
-    FUseMD5 := Value.AsBoolean;
-
-  Value := Root.Items['FTP'];
-  if Value is TdwsJSONObject then
-    FFtpOptions.Read(TdwsJSONObject(Value));
-
-  Value := Root.Items['Copy'];
-  if Value is TdwsJSONObject then
-    FCopyOptions.Read(TdwsJSONObject(Value));
-end;
-
-procedure TWebUpdateProject.Write(Root: TdwsJSONObject);
-var
-  ObjVal: TdwsJSONObject;
-begin
-  inherited;
-
-  if FBaseDirectory <> '' then
-    Root.AddValue('BaseDirectory').AsString := FBaseDirectory;
-
-  if FChannelsFilename <> '' then
-    Root.AddValue('ChannelFilename').AsString := FChannelsFilename;
-
-  if FCurrentChannel <> '' then
-    Root.AddValue('CurrentChannel').AsString := FCurrentChannel;
-
-  if FAutoCopyUpload = True then
-    Root.AddValue('AutoCopyUpload').AsBoolean := FAutoCopyUpload;
-
-  if FApplicationName <> '' then
-    Root.AddValue('ApplicationName').AsString := FApplicationName;
-
-  if FUseMD5 = True then
-    Root.AddValue('UseMD5').AsBoolean := FUseMD5;
-
-  // write FTP options (and add if it contains any data)
-  ObjVal := TdwsJSONObject.Create;
-  try
-    FFtpOptions.Write(ObjVal);
-    if ObjVal.ElementCount > 0 then
-      Root.Add('FTP', ObjVal.Clone);
-  finally
-    ObjVal.Free;
-  end;
-
-  // write copy options (and add if it contains any data)
-  ObjVal := TdwsJSONObject.Create;
-  try
-    FCopyOptions.Write(ObjVal);
-    if ObjVal.ElementCount > 0 then
-      Root.Add('Copy', ObjVal.Clone);
-  finally
-    ObjVal.Free;
   end;
 end;
+
+initialization
+  TJSONSerializer.RegisterClassForJSON(TWebUpdateProject.TFTPOptions);
+  TJSONSerializer.RegisterClassForJSON(TWebUpdateProject.TCopyOptions);
+  TJSONSerializer.RegisterClassForJSON(TWebUpdateProject);
 
 end.

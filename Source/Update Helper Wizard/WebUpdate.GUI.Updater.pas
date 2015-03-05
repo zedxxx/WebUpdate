@@ -3,10 +3,22 @@ unit WebUpdate.GUI.Updater;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.ImgList, VirtualTrees,
-  WebUpdate.Classes.Updater;
+  Windows,
+  Messages,
+  SysUtils,
+  Classes,
+  Forms,
+  ImgList,
+  Controls,
+  StdCtrls,
+  Graphics,
+  ExtCtrls,
+  ComCtrls,
+  Dialogs,
+  VirtualTrees,
+  WebUpdate.Classes.Updater,
+  WebUpdate.Classes.FileItem,
+  WebUpdate.Classes.UpdaterThread;
 
 type
   TNodeFileItem = record
@@ -26,7 +38,7 @@ type
     LabelHeader: TLabel;
     LabelRemainingTime: TLabel;
     LabelSelectChannel: TLabel;
-    LabelSpeed: TLabel;
+    lblBytesProgress: TLabel;
     LabelSummary: TLabel;
     LabelTotalStatus: TLabel;
     PageControl: TPageControl;
@@ -53,20 +65,20 @@ type
     procedure TabFileListShow(Sender: TObject);
     procedure TabSummaryShow(Sender: TObject);
     procedure TreeFilesGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+      Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: {$IFDEF UNICODE} string {$ELSE} WideString {$ENDIF});
     procedure TreeFilesGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: Integer);
   private
     FWebUpdater: TWebUpdater;
-    FCommandLine: Boolean;
     FMainAppWindowCaption: string;
     FMainAppExecutable: string;
     FDelay: Integer;
     FVerbose: Boolean;
 
     procedure ProgressEventHandler(Sender: TObject; Progress: Integer;
-      ByteCount: Integer; KBPS: Single; RemainingTime: TDateTime);
+      ByteCount: Integer; RemainingTime: TDateTime);
     procedure FileNameProgressEventHandler(Sender: TObject; const FileName: TFileName);
     procedure WebUpdateCompleteEventHandler(Sender: TObject);
     procedure ErrorHandler(Sender: TObject; ErrorType: TWebUpdateErrorType;
@@ -85,88 +97,19 @@ implementation
 {$R *.dfm}
 
 uses
-  System.StrUtils, WinAPI.ShellAPI, WinAPI.TlHelp32, dwsUtils;
+  StrUtils,
+  ShellAPI,
+  WebUpdate.Tools.Windows,
+  Updater.CmdLine.Processor;
 
 resourcestring
-  RStrBaseURL = 'https://raw.githubusercontent.com/CWBudde/WebUpdate/master/Binaries/Snapshots/';
+  rsBaseURL = 'http://127.0.0.1/snapshots/';
+  rsDownloadProgressInfo = '%s %.2f of %.2f MiB (%.2f%s)';
 
 resourcestring
   RStrMD5MismatchUpdate = 'MD5 mismatch, update might be corrupt!';
-  RStrUnknownOption = 'Unknown option: %s!';
-  RStrUnknownCommand = 'Unknown command: %s';
-  RStrChannelDefinitionError = 'Could not load channel definition!';
-  RStrSetupLoadError = 'Could not load setup!';
-
-procedure KillProcess(ProcessID: Integer);
-var
-  ProcessHandle: THandle;
-  ExitCode: Integer;
-begin
-  // get process handle
-  ProcessHandle := OpenProcess(PROCESS_CREATE_THREAD or PROCESS_VM_OPERATION
-    or PROCESS_VM_WRITE or PROCESS_VM_READ or PROCESS_TERMINATE, False,
-    ProcessID);
-
-  // eventually close process
-  if (ProcessHandle > 0) then
-    try
-      ExitCode := 0;
-      GetExitCodeProcess(ProcessHandle, DWORD(ExitCode));
-      TerminateProcess(ProcessHandle, ExitCode);
-    finally
-      CloseHandle(ProcessHandle);
-    end;
-end;
-
-function GetProcessIDForExecutable(ExecutableFileName: string): Cardinal;
-var
-  ContinueLoop: Boolean;
-  SnapshotHandle: THandle;
-  ProcessEntry32: TProcessEntry32;
-  Found: Boolean;
-begin
-  // initialization
-  ProcessEntry32.dwSize := SizeOf(TProcessEntry32);
-  Found := False;
-
-  // get snapshot
-  SnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-  if SnapshotHandle > 0 then
-    try
-      ContinueLoop := Process32First(SnapshotHandle, ProcessEntry32);
-      while Integer(ContinueLoop) <> 0 do
-      begin
-        if UnicodeSameText(ExtractFileName(ProcessEntry32.szExeFile), ExecutableFileName) then
-        begin
-          Found := True;
-          Break;
-        end;
-        ContinueLoop := Process32Next(SnapshotHandle, ProcessEntry32);
-      end;
-      if not Found then
-        Exit(0);
-    finally
-      CloseHandle(SnapshotHandle);
-    end;
-
-  Result := ProcessEntry32.th32ProcessID;
-end;
-
-function GetProcessIDForWindow(Caption: string): Cardinal;
-var
-  WinHwnd: HWND;
-begin
-  Result := 0;
-
-  // check for opened main application
-  WinHwnd := FindWindow(nil, PWideChar(Caption));
-  if not (IsWindow(WinHwnd)) then
-    Exit;
-
-  // get process ID
-  GetWindowThreadProcessID(WinHwnd, @Result);
-end;
-
+  //RStrChannelDefinitionError = 'Could not load channel definition!';
+  //RStrSetupLoadError = 'Could not load setup!';
 
 { TFormWebUpdate }
 
@@ -174,13 +117,14 @@ procedure TFormWebUpdate.FormCreate(Sender: TObject);
 begin
   PageControl.ActivePage := TabSelectChannel;
   TreeFiles.NodeDataSize := SizeOf(TNodeFileItem);
-
+  TreeFiles.OnGetText := Self.TreeFilesGetText;
+  
   FMainAppWindowCaption := '';
   FMainAppExecutable := '';
 
   // create WebUpdater
   FWebUpdater := TWebUpdater.Create;
-  FWebUpdater.BaseURL := RStrBaseURL;
+  FWebUpdater.BaseURL := rsBaseURL;
   FWebUpdater.OnProgress := ProgressEventHandler;
   FWebUpdater.OnFileNameProgress := FileNameProgressEventHandler;
   FWebUpdater.OnDone := WebUpdateCompleteEventHandler;
@@ -205,32 +149,27 @@ procedure TFormWebUpdate.ButtonFinishClick(Sender: TObject);
 var
   AppName: TFileName;
 begin
-  // now eventually execute specified application
-  if CheckBoxStartApplication.Visible and CheckBoxStartApplication.Checked then
-  begin
+  if CheckBoxStartApplication.Visible and CheckBoxStartApplication.Checked then begin
     AppName := FWebUpdater.MainAppFileName;
-    if AppName <> '' then
+    if AppName <> '' then begin
       ShellExecute(Application.Handle, 'open', PChar(AppName), nil,
         PChar(ExtractFileDir(AppName)), SW_SHOW);
+    end;
   end;
-
   Close;
 end;
 
 procedure TFormWebUpdate.ButtonNextClick(Sender: TObject);
 begin
-  if RadioButtonStable.Checked then
-    FWebUpdater.ChannelName := 'Stable'
-  else
+  if RadioButtonStable.Checked then begin
+    FWebUpdater.ChannelName := 'Stable';
+  end else begin
     FWebUpdater.ChannelName := ComboBoxChannels.Text;
-
-  // switch pages to file list / progress tab
-  if FVerbose then
-    PageControl.ActivePage := TabFileList
-  else
-  begin
+  end;
+  if FVerbose then begin
+    PageControl.ActivePage := TabFileList;
+  end else begin
     PerformWebUpdate;
-
     PageControl.ActivePage := TabProgress;
     Update;
   end;
@@ -239,8 +178,6 @@ end;
 procedure TFormWebUpdate.ButtonStartClick(Sender: TObject);
 begin
   PerformWebUpdate;
-
-  // switch pages to progress tab
   PageControl.ActivePage := TabProgress;
   Update;
 end;
@@ -252,15 +189,42 @@ begin
 end;
 
 procedure TFormWebUpdate.ProgressEventHandler(Sender: TObject;
-  Progress: Integer; ByteCount: Integer; KBPS: Single; RemainingTime: TDateTime);
+  Progress: Integer; ByteCount: Integer; RemainingTime: TDateTime);
+var
+  VPercent: Single;
+  VTotal, VDone: Int64;
 begin
   ProgressBarCurrent.Position := Progress;
   ProgressBarTotal.Position := ProgressBarTotal.Position + ByteCount;
 
   LabelRemainingTime.Caption := 'Time remaining: ' + TimeToStr(RemainingTime);
   LabelRemainingTime.Visible := True;
-  LabelSpeed.Caption := 'Speed: ' + IntToStr(Round(KBPS)) + ' kb/s';
-  LabelSpeed.Visible := True;
+
+  VTotal := FWebUpdater.TotalBytes;
+  VDone := ProgressBarTotal.Position;
+
+  if VTotal > 0 then begin
+    if VDone = VTotal then begin
+      VPercent := 100;
+    end else begin
+      VPercent := (VDone / VTotal) * 100;
+    end;
+  end else begin
+    VPercent := 0.0;
+  end;
+
+  lblBytesProgress.Caption :=
+    Format(
+      rsDownloadProgressInfo,
+      [
+        'Total: ',
+        VDone / 1024 / 1024,
+        VTotal / 1024 / 1024,
+        VPercent,
+        '%'
+      ]
+    );
+  lblBytesProgress.Visible := True;
 end;
 
 procedure TFormWebUpdate.WebUpdateCompleteEventHandler(Sender: TObject);
@@ -268,8 +232,7 @@ begin
   // allow starting the application, if an (existing!) app is specified
   CheckBoxStartApplication.Visible := FileExists(FWebUpdater.MainAppFileName);
   CheckBoxStartApplication.Checked := CheckBoxStartApplication.Visible;
-
-  // switch pages to summary tab
+  
   PageControl.ActivePage := TabSummary;
 end;
 
@@ -277,8 +240,7 @@ procedure TFormWebUpdate.ErrorHandler(Sender: TObject;
   ErrorType: TWebUpdateErrorType; const FileName: TFileName; var Ignore: Boolean);
 begin
   if ErrorType = etChecksum then
-    case MessageDlg(RStrMD5MismatchUpdate,
-      mtWarning, [mbAbort, mbIgnore], 0) of
+    case MessageDlg(RStrMD5MismatchUpdate, mtWarning, [mbAbort, mbIgnore], 0) of
       mrAbort:
         Ignore := False;
       mrIgnore:
@@ -296,64 +258,22 @@ end;
 procedure TFormWebUpdate.ScanCommandLineParameters;
 var
   Index: Integer;
-  Text: string;
-  EqPos: Integer;
   ChannelNames: TStringList;
 begin
   FVerbose := False;
-  FCommandLine := ParamCount >= 1;
-
-  for Index := 1 to ParamCount do
-  begin
-    Text := ParamStr(Index);
-    if Text[1] = '-' then
-    begin
-      // remove options identifier and get colon pos
-      Delete(Text, 1, 1);
-      EqPos := Pos('=', Text);
-
-      if StartsText('u=', Text) then
-        FWebUpdater.BaseURL := Copy(Text, EqPos + 1, Length(Text) - EqPos)
-      else if StartsText('f=', Text) then
-        FWebUpdater.ChannelsFileName := Copy(Text, EqPos + 1, Length(Text) - EqPos)
-      else if StartsText('c=', Text) then
-        FWebUpdater.ChannelName := Copy(Text, EqPos + 1, Length(Text) - EqPos)
-      else if StartsText('d=', Text) then
-        FDelay := StrToInt(Copy(Text, EqPos + 1, Length(Text) - EqPos))
-      else if StartsText('l=', Text) then
-        FWebUpdater.LocalChannelFileName := Copy(Text, EqPos + 1, Length(Text) - EqPos)
-      else if StartsText('e=', Text) then
-        FMainAppExecutable := Copy(Text, EqPos + 1, Length(Text) - EqPos)
-      else if StartsText('w=', Text) then
-        FMainAppWindowCaption := Copy(Text, EqPos + 1, Length(Text) - EqPos)
-      else if StartsText('verbose', Text) then
-        FVerbose := True
-      else
-      begin
-        MessageDlg(Format(RStrUnknownOption, [Text]), mtError, [mbOK], 0);
-        Exit;
-      end;
-    end
-    else
-      MessageDlg(Format(RStrUnknownCommand, [Text]), mtError, [mbOK], 0);
-  end;
-
-  // check for command-line calling
-  if FCommandLine then
-  begin
+  if ParamCount >= 1 then begin
+    if not ScanParameters(FWebUpdater, FMainAppExecutable, FMainAppWindowCaption, FDelay) then begin
+      Assert(False);
+    end;
     PerformWebUpdate;
-
-    // switch pages to progress tab
     PageControl.ActivePage := TabProgress;
     Update;
-  end
-  else
-  begin
+  end else begin
     FVerbose := True;
     ChannelNames := TStringList.Create;
     try
       ComboBoxChannels.Clear;
-      FWebUpdater.GetChannelNames(ChannelNames);
+      FWebUpdater.GetChannelNames(ChannelNames);        // HTTP REQUEST !!!
       for Index := 0 to ChannelNames.Count - 1 do
         if not SameText(ChannelNames[Index], 'Stable') then
           ComboBoxChannels.Items.Add(ChannelNames[Index]);
@@ -388,6 +308,7 @@ end;
 
 procedure TFormWebUpdate.TabFileListShow(Sender: TObject);
 var
+  I: Integer;
   FileList: TFileItemList;
   FileItem: TFileItem;
   Node: PVirtualNode;
@@ -400,11 +321,11 @@ begin
   ButtonClose.OnClick := ButtonAbortClick;
 
   TreeFiles.BeginUpdate;
-  TreeFiles.Clear;
   try
-    FileList := FWebUpdater.FileItemList;
-    for FileItem in FileList do
-    begin
+    TreeFiles.Clear;
+    FileList := FWebUpdater.FileItemList;               // HTTP REQUEST !!!
+    for I := 0 to FileList.Count - 1 do begin
+      FileItem := TFileItem(FileList[I]);
       Node := TreeFiles.AddChild(TreeFiles.RootNode);
       NodeData := TreeFiles.GetNodeData(Node);
       NodeData^.FileItem := FileItem;
@@ -447,7 +368,7 @@ end;
 
 procedure TFormWebUpdate.TreeFilesGetText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-  var CellText: string);
+  var CellText: {$IFDEF UNICODE} string {$ELSE} WideString {$ENDIF});
 var
   NodeData: PNodeFileItem;
 begin
@@ -467,37 +388,26 @@ end;
 
 function TFormWebUpdate.CloseMainApplication: Boolean;
 var
-  ProcessID: Integer;
-  Counter: Integer;
+  VMsgResult: Integer;
 begin
-  Result := False;
-  Counter := 0;
-  repeat
-    ProcessID := 0;
-    if FMainAppExecutable <> '' then
-      ProcessID := GetProcessIDForExecutable(FMainAppExecutable)
-    else if FMainAppWindowCaption <> '' then
-      ProcessID := GetProcessIDForWindow(FMainAppWindowCaption);
-
-    // check if process has been found
-    if ProcessID = 0 then
-      Exit(True);
-
-    // show dialog
-    case MessageDlg('Main application is already running!' + #13#10#13#10 +
-      'Force closing the main application?', mtWarning, [mbYes, mbAbort,
-      mbRetry, mbIgnore], 0) of
-      mrRetry:
-        Sleep(1 + FDelay);
-      mrYes:
-        KillProcess(ProcessID);
-      mrAbort:
-        Exit(False);
-      mrIgnore:
-        Exit(True);
+  Result := CloseApplication(FMainAppExecutable, FMainAppWindowCaption, FDelay, False);
+  while not Result do begin
+    VMsgResult := MessageDlg(
+      'Main application is already running!' + #13#10#13#10 +
+      'Force closing the main application?', mtWarning, [mbYes, mbAbort, mbRetry], 0
+    );
+    case VMsgResult of
+      mrRetry: begin
+        Result := CloseApplication(FMainAppExecutable, FMainAppWindowCaption, FDelay, False);
+      end;
+      mrYes: begin
+        Result := CloseApplication(FMainAppExecutable, FMainAppWindowCaption, FDelay, True);
+      end;
+      mrAbort: begin
+        Exit;
+      end;
     end;
-    Inc(Counter);
-  until Counter >= 10;
+  end;
 end;
 
 procedure TFormWebUpdate.PerformWebUpdate;

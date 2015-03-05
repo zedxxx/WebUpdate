@@ -3,7 +3,9 @@ unit WebUpdate.Classes.WebUpdate;
 interface
 
 uses
-  System.SysUtils, System.Classes, WebUpdate.JSON.Channels,
+  SysUtils,
+  Classes,
+  WebUpdate.JSON.Channels,
   WebUpdate.JSON.Channel;
 
 type
@@ -44,8 +46,17 @@ type
 implementation
 
 uses
-  System.StrUtils, WinApi.ShellApi, WinApi.Windows, Vcl.Forms,
-  IdSSLOpenSSL, IdHTTP;
+  StrUtils,
+  ShellApi,
+  Windows,
+  {$IFDEF UNICODE}
+  Vcl.Forms,
+  {$ELSE}
+  Forms,
+  {$ENDIF}
+  IdSSLOpenSSL,
+  IdHTTP,
+  WebUpdate.Tools;
 
 { TWebUpdate }
 
@@ -154,14 +165,17 @@ end;
 
 procedure TWebUpdate.GetChannels(Channels: TStrings);
 var
+  I: Integer;
   Item: TWebUpdateChannelItem;
 begin
   // first get channels information from server
   GetChannelsInformationFromServer;
 
   Channels.Clear;
-  for Item in FChannels.Items do
+  for I := 0 to FChannels.Items.Count - 1 do begin
+    Item := TWebUpdateChannelItem(FChannels.Items[I]);
     Channels.Add(Item.Name)
+  end;
 end;
 
 procedure TWebUpdate.GetLocalChannelInformation;
@@ -170,6 +184,7 @@ var
   LocalSetup: TWebUpdateChannelSetup;
 begin
   FullLocalFileName := FLocalFileName;
+
   if IsRelativePath(FullLocalFileName) then
     FullLocalFileName := ExtractFilePath(ParamStr(0)) + FullLocalFileName;
 
@@ -186,6 +201,7 @@ end;
 
 function TWebUpdate.CheckForUpdate: Boolean;
 var
+  I: Integer;
   ChannelItem: TWebUpdateChannelItem;
 begin
   Result := False;
@@ -195,10 +211,15 @@ begin
     GetLocalChannelInformation;
 
   // locate local channel
-  for ChannelItem in FChannels.Items do
-    if ChannelItem.Name = FChannelName then
-      if ChannelItem.Modified > FLastModified then
-        Exit(True);
+  for I := 0 to FChannels.Items.Count - 1 do begin
+    ChannelItem := TWebUpdateChannelItem(FChannels.Items[I]);
+    if ChannelItem.Name = FChannelName then begin
+      if ChannelItem.Modified > FLastModified then begin
+        Result := True;
+        Exit;
+      end;
+    end;
+  end;
 end;
 
 procedure TWebUpdate.PerformUpdate;

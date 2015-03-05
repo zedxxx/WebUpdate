@@ -3,10 +3,14 @@ unit WebUpdate.GUI.Options;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask,
-  VirtualTrees, JvExMask, JvToolEdit;
+  Classes,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  ComCtrls,
+  VirtualTrees;
 
 type
   TOptionsItem = record
@@ -14,13 +18,11 @@ type
   end;
   POptionsItem = ^TOptionsItem;
 
-  TFormOptions = class(TForm)
+  TfrmOptions = class(TForm)
     ButtonCancel: TButton;
     ButtonOK: TButton;
     CheckBoxAutoCopyUpload: TCheckBox;
     CheckBoxCopyTo: TCheckBox;
-    EditBaseDirectory: TJvDirectoryEdit;
-    EditChannelFileName: TJvFilenameEdit;
     EditCopyPath: TEdit;
     EditFtpPassword: TEdit;
     EditFtpServer: TEdit;
@@ -38,38 +40,58 @@ type
     TabSheetMain: TTabSheet;
     TreeOptions: TVirtualStringTree;
     CheckBoxMD5: TCheckBox;
+    dlgOpenChannelFile: TOpenDialog;
+    edtBaseDir: TEdit;
+    btnBaseDir: TButton;
+    edtChannelFile: TEdit;
+    btnChannelFile: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure EditChannelFileNameAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
     procedure TreeOptionsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+      Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: {$IFDEF UNICODE} string {$ELSE} WideString {$ENDIF});
     procedure TreeOptionsChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure btnBaseDirClick(Sender: TObject);
+    procedure btnChannelFileClick(Sender: TObject);
   private
     procedure SetupTree;
   end;
 
 implementation
 
+uses
+  {$WARN UNIT_PLATFORM OFF}
+  FileCtrl;
+  {$WARN UNIT_PLATFORM ON}
+
 {$R *.dfm}
 
 { TFormOptions }
 
-procedure TFormOptions.EditChannelFileNameAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
+procedure TfrmOptions.btnBaseDirClick(Sender: TObject);
+var
+  VBaseDir: string;
 begin
-  // try to make the path relative
-  AName := ExtractRelativePath(IncludeTrailingPathDelimiter(
-    EditBaseDirectory.Directory), AName);
+  VBaseDir := edtBaseDir.Text;
+  if SelectDirectory('Select a directory', '', VBaseDir, []) then begin
+    edtBaseDir.Text := VBaseDir;
+  end;
 end;
 
-procedure TFormOptions.FormCreate(Sender: TObject);
+procedure TfrmOptions.btnChannelFileClick(Sender: TObject);
+begin
+  if dlgOpenChannelFile.Execute then begin
+    edtChannelFile.Text := dlgOpenChannelFile.FileName;
+  end;
+end;
+
+procedure TfrmOptions.FormCreate(Sender: TObject);
 begin
   TreeOptions.NodeDataSize := SizeOf(TOptionsItem);
   SetupTree;
   PageControl.ActivePageIndex := 0;
 end;
 
-procedure TFormOptions.TreeOptionsChange(Sender: TBaseVirtualTree;
+procedure TfrmOptions.TreeOptionsChange(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 var
   NodeData: POptionsItem;
@@ -81,9 +103,9 @@ begin
   end;
 end;
 
-procedure TFormOptions.TreeOptionsGetText(Sender: TBaseVirtualTree;
+procedure TfrmOptions.TreeOptionsGetText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-  var CellText: string);
+  var CellText: {$IFDEF UNICODE} string {$ELSE} WideString {$ENDIF});
 var
   NodeData: POptionsItem;
 begin
@@ -91,18 +113,21 @@ begin
   CellText := NodeData^.TabSheet.Caption;
 end;
 
-procedure TFormOptions.SetupTree;
+procedure TfrmOptions.SetupTree;
 var
   Node: PVirtualNode;
   NodeData: POptionsItem;
   Index: Integer;
 begin
-  // build tree
-  for Index := 0 to PageControl.PageCount - 1 do
-  begin
+  for Index := 0 to PageControl.PageCount - 1 do begin
     Node := TreeOptions.AddChild(TreeOptions.RootNode);
     NodeData := TreeOptions.GetNodeData(Node);
     NodeData^.TabSheet := PageControl.Pages[Index];
+    if Index = 0 then begin
+      TreeOptions.Selected[Node] := True;
+    end else begin
+      TreeOptions.Selected[Node] := False;
+    end;
   end;
 end;
 

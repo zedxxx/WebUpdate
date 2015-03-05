@@ -1,4 +1,4 @@
-object FormAbout: TFormAbout
+object frmAbout: TfrmAbout
   Left = 0
   Top = 0
   BorderStyle = bsDialog
@@ -36,7 +36,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = []
-    Font.Quality = fqNonAntialiased
     ParentFont = False
   end
   object LabelDWS: TLabel
@@ -51,7 +50,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = [fsUnderline]
-    Font.Quality = fqNonAntialiased
     ParentFont = False
     OnClick = LabelDWSClick
   end
@@ -67,7 +65,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = [fsUnderline]
-    Font.Quality = fqNonAntialiased
     ParentFont = False
     OnClick = LabelJEDIClick
   end
@@ -83,7 +80,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = [fsUnderline]
-    Font.Quality = fqNonAntialiased
     ParentFont = False
     OnClick = LabelVirtualTreeviewClick
   end
@@ -99,7 +95,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = [fsUnderline]
-    Font.Quality = fqNonAntialiased
     ParentFont = False
     OnClick = LabelIndyClick
   end
@@ -114,7 +109,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = []
-    Font.Quality = fqNonAntialiased
     ParentFont = False
   end
   object LabelComma2: TLabel
@@ -128,7 +122,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = []
-    Font.Quality = fqNonAntialiased
     ParentFont = False
   end
   object LabelComma1: TLabel
@@ -142,7 +135,6 @@ object FormAbout: TFormAbout
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = []
-    Font.Quality = fqNonAntialiased
     ParentFont = False
   end
   object MemoLGPL: TMemo
@@ -901,7 +893,6 @@ object FormAbout: TFormAbout
       Font.Height = -35
       Font.Name = 'Tahoma'
       Font.Style = []
-      Font.Quality = fqAntialiased
       ParentFont = False
     end
   end

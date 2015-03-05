@@ -1,329 +1,57 @@
-﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-		<PropertyGroup>
-			<ProjectGuid>{2AD69CCE-006B-45F1-A5F5-7763D22A0AB9}</ProjectGuid>
-			<ProjectVersion>13.4</ProjectVersion>
-			<FrameworkType>VCL</FrameworkType>
-			<MainSource>UpdaterWizard.dpr</MainSource>
-			<Base>True</Base>
-			<Config Condition="'$(Config)'==''">Debug</Config>
-			<Platform Condition="'$(Platform)'==''">Win32</Platform>
-			<TargetedPlatforms>3</TargetedPlatforms>
-			<AppType>Application</AppType>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
-			<Base_Win64>true</Base_Win64>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
-			<Base_Win32>true</Base_Win32>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
-			<Cfg_1>true</Cfg_1>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
-			<Cfg_1_Win64>true</Cfg_1_Win64>
-			<CfgParent>Cfg_1</CfgParent>
-			<Cfg_1>true</Cfg_1>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
-			<Cfg_1_Win32>true</Cfg_1_Win32>
-			<CfgParent>Cfg_1</CfgParent>
-			<Cfg_1>true</Cfg_1>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
-			<Cfg_2>true</Cfg_2>
-			<CfgParent>Base</CfgParent>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
-			<Cfg_2_Win64>true</Cfg_2_Win64>
-			<CfgParent>Cfg_2</CfgParent>
-			<Cfg_2>true</Cfg_2>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
-			<Cfg_2_Win32>true</Cfg_2_Win32>
-			<CfgParent>Cfg_2</CfgParent>
-			<Cfg_2>true</Cfg_2>
-			<Base>true</Base>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Base)'!=''">
-			<Icon_MainIcon>..\..\Glyphs\WebUpdate.ico</Icon_MainIcon>
-			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-			<Manifest_File>None</Manifest_File>
-			<VerInfo_Locale>1031</VerInfo_Locale>
-			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-			<DCC_UsePackage>fmx;IndySystem;CustomIPTransport;dsnap;IndyCore;fmxase;FmxTeeUI;inetdbxpress;bindcompfmx;rtl;dbrtl;bindcomp;inetdb;xmlrtl;IndyProtocols;bindengine;FMXTee;soaprtl;inet;fmxobj;fmxdae;$(DCC_UsePackage)</DCC_UsePackage>
-			<DCC_DcuOutput>..\..\DCU</DCC_DcuOutput>
-			<DCC_ExeOutput>..\..\Binaries</DCC_ExeOutput>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Base_Win64)'!=''">
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-			<DCC_UsePackage>AbbreviaVCL;TeeDB;vclimg;vcldb;vcldsnap;vclribbon;EasyListviewD16;vcl;webdsnap;OmniThreadLibraryRuntimeXE2;GR32_RSXE2;Tee;SynEdit_RXE2;O408_r;vclactnband;TeeUI;bindcompvcl;vclie;vcltouch;websnap;VclSmp;dsnapcon;vclx;MPCommonLibD16;VirtualTreesR;O408br;$(DCC_UsePackage)</DCC_UsePackage>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Base_Win32)'!=''">
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<DCC_UsePackage>JvBDE;JvGlobus;fsADO16;AggPasRunXE2;JvMM;JvManagedThreads;AbbreviaVCL;USBDeviceTreePkg;JvDlgs;Alcinoe_d2007;TeeDB;JvCrypt;frxTee16;inetdbbde;frxBDE16;ColorPickerButtonD16;GLScene_RunTime;JvNet;JvDotNetCtrls;PrintPreview;ECXMLParserD160;DIHtmlParser_DXE2;vclimg;fmi;JvXPCtrls;GeckoSDK;vcldb;GLS_Computing_RunTime;vcldsnap;mbColorLibD16;DeHL_Package;ChromeTabs_XE2_R;MetaGraphics_D16;GR32_AddOn_RSXE2;DCEF_XE2;JvCore;frxADO16;vclribbon;frxe16;EasyListviewD16;vcl;ewbrun;fsTee16;GeckoComponents;JvAppFrm;JvDB;hexlicensemgr;DAV_ASIOHost_D16;webdsnap;JvRuntimeDesign;OmniThreadLibraryRuntimeXE2;JclDeveloperTools;GR32_RSXE2;BMSpinEdit;GR32_DSGN_RSXE2;JvDocking;JvWizards;madBasic_;GR32_FreeType_XE2;OpenWirePkgD16;JvHMI;frxDBX16;JvBands;vcldbx;GR32_Controls_D16;frx16;DAV_Common_D16;JvPluginSystem;mrMath;DAV_DSP_D16;MFControls;Tee;JclContainers;dhcomps;JvCmp;madDisAsm_;JvSystem;svnui;JvTimeFramework;SynEdit_RXE2;JvControls;Mitov.Runtime.D16;fsBDE16;frxDB16;DAV_GUI_D16;O408_r;vclactnband;TeeUI;JvJans;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvPageComps;JvPrintPreview;fs16;madExcept_;frxcs16;vcltouch;websnap;ExceptionExpert16;CrossFPC_XE2;VclSmp;fsDB16;DAV_SEHost_D16;DScintillaRuntime;dsnapcon;FlatControls;JclVcl;JvPascalInterpreter;GR32_Charts_D16;vclx;MPCommonLibD16;SuperTrackbar_D16;svn;OPDE;CPortLibDXE2;bdertl;RemObjects_Synapse_D16;ExpertTools;VirtualTreesR;DAV_VSTHost_D16;O408br;$(DCC_UsePackage)</DCC_UsePackage>
-			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_1)'!=''">
-			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
-			<DCC_Optimize>false</DCC_Optimize>
-			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
-			<DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
-			<DCC_RemoteDebug>true</DCC_RemoteDebug>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-			<Debugger_RunParams>-u=&quot;https://raw.githubusercontent.com/CWBudde/WebUpdate/master/Binaries/Snapshots/&quot; -d=1000 -c=&quot;Stable&quot; -l=&quot;AuthoringTool.json&quot;</Debugger_RunParams>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<DCC_RemoteDebug>false</DCC_RemoteDebug>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_2)'!=''">
-			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
-			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
-			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-			<DCC_DebugInformation>false</DCC_DebugInformation>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_Locale>1033</VerInfo_Locale>
-			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-		</PropertyGroup>
-		<ItemGroup>
-			<DelphiCompile Include="$(MainSource)">
-				<MainSource>MainSource</MainSource>
-			</DelphiCompile>
-			<DCCReference Include="..\Common\WebUpdate.Classes.Updater.pas"/>
-			<DCCReference Include="..\Common\WebUpdate.JSON.Serializer.pas"/>
-			<DCCReference Include="..\Common\WebUpdate.JSON.Channel.pas"/>
-			<DCCReference Include="..\Common\WebUpdate.JSON.Channels.pas"/>
-			<DCCReference Include="WebUpdate.GUI.Updater.pas">
-				<Form>FormWebUpdate</Form>
-			</DCCReference>
-			<DCCReference Include="..\Common\WebUpdate.Tools.pas"/>
-			<BuildConfiguration Include="Release">
-				<Key>Cfg_2</Key>
-				<CfgParent>Base</CfgParent>
-			</BuildConfiguration>
-			<BuildConfiguration Include="Base">
-				<Key>Base</Key>
-			</BuildConfiguration>
-			<BuildConfiguration Include="Debug">
-				<Key>Cfg_1</Key>
-				<CfgParent>Base</CfgParent>
-			</BuildConfiguration>
-		</ItemGroup>
-		<ProjectExtensions>
-			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
-			<Borland.ProjectType/>
-			<BorlandProject>
-				<Delphi.Personality>
-					<Source>
-						<Source Name="MainSource">UpdaterWizard.dpr</Source>
-					</Source>
-					<VersionInfo>
-						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
-						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
-						<VersionInfo Name="MajorVer">1</VersionInfo>
-						<VersionInfo Name="MinorVer">0</VersionInfo>
-						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">0</VersionInfo>
-						<VersionInfo Name="Debug">False</VersionInfo>
-						<VersionInfo Name="PreRelease">False</VersionInfo>
-						<VersionInfo Name="Special">False</VersionInfo>
-						<VersionInfo Name="Private">False</VersionInfo>
-						<VersionInfo Name="DLL">False</VersionInfo>
-						<VersionInfo Name="Locale">1031</VersionInfo>
-						<VersionInfo Name="CodePage">1252</VersionInfo>
-					</VersionInfo>
-					<VersionInfoKeys>
-						<VersionInfoKeys Name="CompanyName"/>
-						<VersionInfoKeys Name="FileDescription"/>
-						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
-						<VersionInfoKeys Name="InternalName"/>
-						<VersionInfoKeys Name="LegalCopyright"/>
-						<VersionInfoKeys Name="LegalTrademarks"/>
-						<VersionInfoKeys Name="OriginalFilename"/>
-						<VersionInfoKeys Name="ProductName"/>
-						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
-						<VersionInfoKeys Name="Comments"/>
-					</VersionInfoKeys>
-					<Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Code\LKSL\Bin\Win32\Debug\LKSL160.bpl">Datei C:\Users\Public\Code\LKSL\Bin\Win32\Debug\LKSL160.bpl nicht gefunden</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Code\Lua4Delphi\BPL\Win32\Debug\Lua4Delphi160.bpl">Lua4Delphi for Delphi XE2</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxCoreRS16.bpl">ExpressCoreLibrary by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxLibraryRS16.bpl">Express Cross Platform Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxEditorsRS16.bpl">ExpressEditors Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxSchedulerRS16.bpl">ExpressScheduler by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxPivotGridRS16.bpl">ExpressPivotGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxPageControlRS16.bpl">ExpressPageControl by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxBarRS16.bpl">ExpressBars by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxBarRS16.bpl">ExpressBars by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxComnRS16.bpl">ExpressCommonLibrary by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxRibbonRS16.bpl">ExpressBars Ribbon controls by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxOrgCRS16.bpl">ExpressOrgChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinsCoreRS16.bpl">ExpressSkins Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSCoreRS16.bpl">ExpressPrinting System by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSTeeChartRS16.bpl">ExpressPrinting System ReportLink for TeeChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinsDesignHelperRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinscxPCPainterRS16.bpl">ExpressSkins Library Painter for PageControl by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinscxSchedulerPainterRS16.bpl">ExpressSkins Library Painter for Scheduler by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinsdxBarPainterRS16.bpl">ExpressSkins Library Painter for Bars by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinsdxNavBarPainterRS16.bpl">ExpressSkins Library Painter for NavBar by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxNavBarRS16.bpl">ExpressNavBar by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinsdxRibbonPainterRS16.bpl">ExpressSkins Library Painter for Ribbon by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinsdxDLPainterRS16.bpl">ExpressSkins Library Painter for Docking Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSdxLCLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressLayoutControl by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxLayoutControlRS16.bpl">ExpressLayout Control by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxNavBarRS16.bpl">ExpressNavBar by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxLayoutControlRS16.bpl">ExpressLayout Control by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxEditorFieldLinkRS16.bpl">ExpressEditors FieldLink by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxDockingRS16.bpl">ExpressDocking Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxBarEditItemRS16.bpl">ExpressBars cxEditor item by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxVerticalGridRS16.bpl">ExpressVerticalGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxtrmdRS16.bpl">ExpressTreePrintedDataSet by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxSpreadSheetRS16.bpl">ExpressSpreadSheet by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSpellCheckerRS16.bpl">ExpressSpellChecker 2 by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxSchedulerGridRS16.bpl">ExpressScheduler connection to ExpressQuantumGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxTreeListdxBarPopupMenuRS16.bpl">ExpressQuantumTreeList 5 dxBar Built-In Menu by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxTreeListRS16.bpl">ExpressQuantumTreeList 5 by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxGridRS16.bpl">ExpressQuantumGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxPageControldxBarPopupMenuRS16.bpl">ExpressPageControl dxBar Popup Menu by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxmdsRS16.bpl">ExpressMemData by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxFlowChartRS16.bpl">ExpressFlowChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxdbtrRS16.bpl">ExpressDBTree by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxdbtrRS16.bpl">ExpressDBTree by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxTabbedMDIRS16.bpl">ExpressBars Tabbed MDI by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxBarExtItemsRS16.bpl">ExpressBars extended items by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxBarExtItemsRS16.bpl">ExpressBars extended items by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxBarExtDBItemsRS16.bpl">ExpressBars extended DB items by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxBarDBNavRS16.bpl">ExpressBars DBNavigator by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxDBOrRS16.bpl">ExpressDBOrgChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxdborRS16.bpl">ExpressDBOrgChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxPivotGridChartRS16.bpl">ExpressPivotGrid 2 connection to ExpressQuantumGrid Chart View by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinBlackRS16.bpl">ExpressSkins - Black Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinBlueprintRS16.bpl">ExpressSkins - Blueprint Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinBlueRS16.bpl">ExpressSkins - Blue Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinCaramelRS16.bpl">ExpressSkins - Caramel Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinCoffeeRS16.bpl">ExpressSkins - Coffee Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinDarkRoomRS16.bpl">ExpressSkins - Darkroom Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSharpPlusRS16.bpl">ExpressSkins - SharpPlus Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSilverRS16.bpl">ExpressSkins - Silver Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSpringTimeRS16.bpl">ExpressSkins - Springtime Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinStardustRS16.bpl">ExpressSkins - Stardust Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxPScxPCProdRS16.bpl">ExpressPrinting System ContainerProducer for ExpressPageControl by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinscxSchedulerPainterRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper for Scheduler Painter by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinsdxRibbonPaintersRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper for Ribbon Painters by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinscxPCPainterRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper for PageControl Painter by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinsdxNavBarPainterRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper for NavBar Painter by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinscxEditorsHelperRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper for ExpressEditors by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxSkinsdxBarsPaintersRS16.bpl">ExpressSkins Library Uses Clause Auto Fill Helper for Bars Painters by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinXmas2008BlueRS16.bpl">ExpressSkins - Xmas2008Blue Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinWhiteprintRS16.bpl">ExpressSkins - Whiteprint Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinVS2010RS16.bpl">ExpressSkins - VS2010 Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinValentineRS16.bpl">ExpressSkins - Valentine Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinTheAsphaltWorldRS16.bpl">ExpressSkins - TheAsphaltWorld Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSummer2008RS16.bpl">ExpressSkins - Summer2008 Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSharpRS16.bpl">ExpressSkins - Sharp Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSevenClassicRS16.bpl">ExpressSkins - SevenClassic Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinSevenRS16.bpl">ExpressSkins - Seven Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinPumpkinRS16.bpl">ExpressSkins - Pumpkin Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2010SilverRS16.bpl">ExpressSkins - Office2010Silver Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2010BlueRS16.bpl">ExpressSkins - Office2010Blue Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2010BlackRS16.bpl">ExpressSkins - Office2010Black Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2007SilverRS16.bpl">ExpressSkins - Office2007Silver Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2007GreenRS16.bpl">ExpressSkins - Office2007Green Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2007PinkRS16.bpl">ExpressSkins - Office2007Pink Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2007BlueRS16.bpl">ExpressSkins - Office2007Blue Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinOffice2007BlackRS16.bpl">ExpressSkins - Office2007Black Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinMoneyTwinsRS16.bpl">ExpressSkins - MoneyTwins Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinMcSkinRS16.bpl">ExpressSkins - McSkin Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinLondonLiquidSkyRS16.bpl">ExpressSkins - LondonLiquidSky Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinLiquidSkyRS16.bpl">ExpressSkins - LiquidSky Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinLilianRS16.bpl">ExpressSkins - Lilian Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkiniMaginaryRS16.bpl">ExpressSkins - iMaginary Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinHighContrastRS16.bpl">ExpressSkins - HighContrast Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinGlassOceansRS16.bpl">ExpressSkins - GlassOceans Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinFoggyRS16.bpl">ExpressSkins - Foggy Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinDevExpressStyleRS16.bpl">ExpressSkins - DevExpressStyle Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinDevExpressDarkStyleRS16.bpl">ExpressSkins - DevExpressDarkStyle Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dxSkinDarkSideRS16.bpl">ExpressSkins - DarkSide Skin by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSPrVwRibbonRS16.bpl">ExpressPrinting System Ribbon Preview Window by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSdxOCLnkRS16.bpl">ExpressPrinting System ReportLinks for ExpressOrgChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSdxFCLnkRS16.bpl">ExpressPrinting System ReportLinks for ExpressFlowChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSdxDBOCLnkRS16.bpl">ExpressPrinting System ReportLinks for ExpressDBOrgChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSLnksRS16.bpl">ExpressPrinting System ReportLinks (Standard) by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxVGridLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressVerticalGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxSSLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressSpreadSheet by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxTLLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressQuantumTreeList by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxGridLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressQuantumGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxPivotGridLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressPivotGrid by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxSchedulerLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressScheduler by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSdxDBTVLnkRS16.bpl">ExpressPrinting System ReportLink for ExpressDBTree by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSDBTeeChartRS16.bpl">ExpressPrinting System ReportLink for DBTeeChart by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxExtCommonRS16.bpl">ExpressPrinting System Extended Cross Platform Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPScxCommonRS16.bpl">ExpressPrinting System Cross Platform Library by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dcldxPSPrVwAdvRS16.bpl">ExpressPrinting System Advanced Preview Window by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\Html5Canvas_RSXE2.bpl">Native HTML5 Canvas</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\VirtualShellToolsD16D.bpl">Virtual Shell Tools Designtime Package</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\VppmDesignTime_RSXE2.bpl">VST Plug-in Preset Match (design time)</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\GLSS_BASSXE2.bpl">GLScene - BASS Manager</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\GLSS_OpenALXE2.bpl">GLScene - OpenAL Manager</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D16\win32\RemObjects_IDE_D16.bpl">RemObjects SDK - IDE Integration for Win32</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D16\win32\RemObjects_WebBroker_D16.bpl">RemObjects SDK - WebBroker Library</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D16\win32\RemObjects_Indy_D16.bpl">RemObjects SDK - Indy Library</Excluded_Packages>
-						<Excluded_Packages Name="C:\Windows\system32\OpenWireLabPkgD16.bpl">OpenWire DemoLab demonstration package</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\customcontrol.bpl">Custom Control</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\iOSComps.bpl">Components for iOS</Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\Developer Express.VCL\Library\RS16\dclcxPivotGridOLAPRS16.bpl">ExpressPivotGrid 2 OLAP by Developer Express Inc.</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Code\RiverSoftAVG\bin\Win32\D160\RSChartsDclD160.bpl">RiverSoftAVG Charting Component Suite (Design-Time)</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Code\RiverSoftAVG\bin\Win32\D160\RSFmxChartsDclD160.bpl">RiverSoftAVG Charting Component Suite (Design-Time) (FMX)</Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\Public\Code\ImagingLib\code\Bin\VampyreImagingPackage.XE2.bpl.16">Datei C:\Users\Public\Code\ImagingLib\code\Bin\VampyreImagingPackage.XE2.bpl.16 nicht gefunden</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\FastReports\FastReport 5\LibD16\dclfsibx16.bpl">FastScript 1.9 IBX Components</Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files (x86)\FastReports\FastReport 5\LibD16\dclfrxibx16.bpl">FastReport 5.0 IBX Components</Excluded_Packages>
-					</Excluded_Packages>
-				</Delphi.Personality>
-				<Deployment/>
-				<Platforms>
-					<Platform value="Win64">True</Platform>
-					<Platform value="Win32">True</Platform>
-				</Platforms>
-			</BorlandProject>
-			<ProjectFileVersion>12</ProjectFileVersion>
-		</ProjectExtensions>
-		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
-		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
-	</Project>
-
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{4a1b9e4b-e683-4220-89dd-9f5a35217d3e}</ProjectGuid>
+    <MainSource>UpdaterWizard.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>.bin\UpdaterWizard.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_Optimize>False</DCC_Optimize>
+    <DCC_ExeOutput>.bin</DCC_ExeOutput>
+    <DCC_DcuOutput>.dcu</DCC_DcuOutput>
+    <DCC_ObjOutput>.dcu</DCC_ObjOutput>
+    <DCC_HppOutput>.dcu</DCC_HppOutput>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">False</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">0</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1033</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName"></VersionInfoKeys><VersionInfoKeys Name="FileDescription"></VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Excluded_Packages /><Source><Source Name="MainSource">UpdaterWizard.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="UpdaterWizard.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\..\Utils\ArgumentParser.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Classes.FileItem.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Classes.Updater.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Classes.UpdaterThread.pas" />
+    <DCCReference Include="..\Common\WebUpdate.JSON.Channel.pas" />
+    <DCCReference Include="..\Common\WebUpdate.JSON.Channels.pas" />
+    <DCCReference Include="..\Common\WebUpdate.JSON.Serializer.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Network.Downloader.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Network.DownloaderFactory.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Network.DownloaderIndy.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Tools.pas" />
+    <DCCReference Include="..\Common\WebUpdate.Tools.Windows.pas" />
+    <DCCReference Include="..\Update Helper (Command-line)\Updater.CmdLine.Processor.pas" />
+    <DCCReference Include="WebUpdate.GUI.Updater.pas">
+      <Form>FormWebUpdate</Form>
+    </DCCReference>
+  </ItemGroup>
+</Project>
 <!-- EurekaLog First Line
 [Exception Log]
 EurekaLog Version=6104
@@ -332,7 +60,7 @@ Activate Handle=1
 Save Log File=1
 Foreground Tab=0
 Freeze Activate=0
-Freeze Timeout=60
+Freeze Timeout=0
 SMTP From=eurekalog@email.com
 SMTP Host=
 SMTP Port=25
@@ -351,21 +79,21 @@ AutoCloseDialogSecs=0
 WebSendMode=0
 SupportULR=
 HTMLLayout Count=15
-HTMLLine0="%U003Chtml%U003E"
-HTMLLine1="  %U003Chead%U003E"
-HTMLLine2="  %U003C/head%U003E"
-HTMLLine3="  %U003Cbody TopMargin=10 LeftMargin=10%U003E"
-HTMLLine4="    %U003Ctable width="100%%" border="0"%U003E"
-HTMLLine5="      %U003Ctr%U003E"
-HTMLLine6="        %U003Ctd nowrap%U003E"
-HTMLLine7="          %U003Cfont face="Lucida Console, Courier" size="2"%U003E"
-HTMLLine8="            %U003C%%HTML_TAG%%%U003E"
-HTMLLine9="          %U003C/font%U003E"
-HTMLLine10="        %U003C/td%U003E"
-HTMLLine11="      %U003C/tr%U003E"
-HTMLLine12="    %U003C/table%U003E"
-HTMLLine13="  %U003C/body%U003E"
-HTMLLine14="%U003C/html%U003E"
+HTMLLine0="%3Chtml%3E"
+HTMLLine1="  %3Chead%3E"
+HTMLLine2="  %3C/head%3E"
+HTMLLine3="  %3Cbody TopMargin=10 LeftMargin=10%3E"
+HTMLLine4="    %3Ctable width="100%%" border="0"%3E"
+HTMLLine5="      %3Ctr%3E"
+HTMLLine6="        %3Ctd nowrap%3E"
+HTMLLine7="          %3Cfont face="Lucida Console, Courier" size="2"%3E"
+HTMLLine8="            %3C%%HTML_TAG%%%3E"
+HTMLLine9="          %3C/font%3E"
+HTMLLine10="        %3C/td%3E"
+HTMLLine11="      %3C/tr%3E"
+HTMLLine12="    %3C/table%3E"
+HTMLLine13="  %3C/body%3E"
+HTMLLine14="%3C/html%3E"
 AutoCrashOperation=2
 AutoCrashNumber=10
 AutoCrashMinutes=1
@@ -523,21 +251,21 @@ mtDialog_CPUCaption0="CPU"
 Count mtDialog_CPUHeader=1
 mtDialog_CPUHeader0="CPU Information"
 Count mtDialog_OKButtonCaption=1
-mtDialog_OKButtonCaption0="%U0026OK"
+mtDialog_OKButtonCaption0="%26OK"
 Count mtDialog_TerminateButtonCaption=1
-mtDialog_TerminateButtonCaption0="%U0026Terminate"
+mtDialog_TerminateButtonCaption0="%26Terminate"
 Count mtDialog_RestartButtonCaption=1
-mtDialog_RestartButtonCaption0="%U0026Restart"
+mtDialog_RestartButtonCaption0="%26Restart"
 Count mtDialog_DetailsButtonCaption=1
-mtDialog_DetailsButtonCaption0="%U0026Details"
+mtDialog_DetailsButtonCaption0="%26Details"
 Count mtDialog_CustomButtonCaption=1
-mtDialog_CustomButtonCaption0="%U0026Help"
+mtDialog_CustomButtonCaption0="%26Help"
 Count mtDialog_SendMessage=1
-mtDialog_SendMessage0="%U0026Send this error via Internet"
+mtDialog_SendMessage0="%26Send this error via Internet"
 Count mtDialog_ScreenshotMessage=1
-mtDialog_ScreenshotMessage0="%U0026Attach a Screenshot image"
+mtDialog_ScreenshotMessage0="%26Attach a Screenshot image"
 Count mtDialog_CopyMessage=1
-mtDialog_CopyMessage0="%U0026Copy to Clipboard"
+mtDialog_CopyMessage0="%26Copy to Clipboard"
 Count mtDialog_SupportMessage=1
 mtDialog_SupportMessage0="Go to the Support Page"
 Count mtMSDialog_ErrorMsgCaption=1
@@ -559,9 +287,9 @@ mtMSDialog_HowToReproduceCaption0="What were you doing when the problem happened
 Count mtMSDialog_EmailCaption=1
 mtMSDialog_EmailCaption0="Email address (optional):"
 Count mtMSDialog_SendButtonCaption=1
-mtMSDialog_SendButtonCaption0="%U0026Send Error Report"
+mtMSDialog_SendButtonCaption0="%26Send Error Report"
 Count mtMSDialog_NoSendButtonCaption=1
-mtMSDialog_NoSendButtonCaption0="%U0026Don't Send"
+mtMSDialog_NoSendButtonCaption0="%26Don't Send"
 Count mtLog_AppHeader=1
 mtLog_AppHeader0="Application"
 Count mtLog_AppStartDate=1
@@ -739,7 +467,7 @@ mtReproduceDialog_Caption0="Request"
 Count mtReproduceDialog_Request=1
 mtReproduceDialog_Request0="Please describe the steps to reproduce the error:"
 Count mtReproduceDialog_OKButtonCaption=1
-mtReproduceDialog_OKButtonCaption0="%U0026OK"
+mtReproduceDialog_OKButtonCaption0="%26OK"
 Count mtModules_Handle=1
 mtModules_Handle0="Handle"
 Count mtModules_Name=1

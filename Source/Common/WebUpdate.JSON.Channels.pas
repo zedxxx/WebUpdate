@@ -3,30 +3,38 @@ unit WebUpdate.JSON.Channels;
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, dwsJSON,
+  SysUtils,
+  Contnrs,
   WebUpdate.JSON.Serializer;
+
+{$METHODINFO ON}
 
 type
   TWebUpdateChannelItem = class
-    Name: string;
-    FileName: TFileName;
-    Modified: TDateTime;
-    MD5: string;
+  private
+    FName: string;
+    FFileName: string;
+    FModified: TDateTime;
+    FMD5: string;
+  published
+    property Name: string read FName write FName;
+    property FileName: string read FFileName write FFileName;
+    property Modified: TDateTime read FModified write FModified;
+    property MD5: string read FMD5 write FMD5;
   end;
-  TWebUpdateChannelItems = TList<TWebUpdateChannelItem>;
+
+  TWebUpdateChannelItems = class(TObjectList);
 
   TWebUpdateChannels = class(TJsonSerializer)
   private
     FItems: TWebUpdateChannelItems;
   protected
-    procedure Read(Root: TdwsJSONObject); override;
-    procedure Write(Root: TdwsJSONObject); override;
+    procedure OnBeforeLoad; override;
   public
     constructor Create;
-    class function GetID: string; override;
-
-    function GetItemForChannel(ChannelName: string): TWebUpdateChannelItem;
-
+    destructor Destroy; override;
+    function GetItemForChannel(const AChannelName: string): TWebUpdateChannelItem;
+  published
     property Items: TWebUpdateChannelItems read FItems;
   end;
 
@@ -36,107 +44,40 @@ implementation
 
 constructor TWebUpdateChannels.Create;
 begin
-  inherited;
-  FItems := TWebUpdateChannelItems.Create;
+  inherited Create(TWebUpdateChannelItem);
+  FItems := TWebUpdateChannelItems.Create(True);
 end;
 
-class function TWebUpdateChannels.GetID: string;
+destructor TWebUpdateChannels.Destroy;
 begin
-  Result := 'Channels';
+  FreeAndNil(FItems);
+  inherited Destroy;
+end;
+
+procedure TWebUpdateChannels.OnBeforeLoad;
+begin
+  FItems.Clear;
 end;
 
 function TWebUpdateChannels.GetItemForChannel(
-  ChannelName: string): TWebUpdateChannelItem;
+  const AChannelName: string
+): TWebUpdateChannelItem;
 var
-  Index: Integer;
+  I: Integer;
+  VItem: TWebUpdateChannelItem;
 begin
   Result := nil;
-  for Index := 0 to FItems.Count - 1 do
-    if SameText(FItems[Index].Name, ChannelName) then
-      Exit(FItems[Index]);
-end;
-
-procedure TWebUpdateChannels.Read(Root: TdwsJSONObject);
-var
-  Value: TdwsJSONValue;
-  Channels: TdwsJSONArray;
-  Index: Integer;
-  Item: TWebUpdateChannelItem;
-begin
-  inherited;
-
-  Value := Root.Items['Channels'];
-
-  // try the older 'Files' [deprecated!]
-  if not (Value is TdwsJSONArray) then
-    Value := Root.Items['Files'];
-
-  if not (Value is TdwsJSONArray) then
-    raise Exception.Create('Array expected!');
-
-  // clear existing items
-  FItems.Clear;
-
-  Channels := TdwsJSONArray(Value);
-  for Index := 0 to Channels.ElementCount - 1 do
-  begin
-    Item := TWebUpdateChannelItem.Create;
-
-    // get name
-    Value := Channels.Elements[Index].Items['Name'];
-    Item.Name := Value.AsString;
-
-    // get filename
-    Value := Channels.Elements[Index].Items['FileName'];
-    if Assigned(Value) then
-      Item.FileName := Value.AsString
-    else
-      Item.FileName := Item.Name + '/' + Item.Name + '.json';
-
-    // get file modified
-    Value := Channels.Elements[Index].Items['Modified'];
-    if Assigned(Value) then
-      Item.Modified := ISO8601ToDateTime(Value.AsString)
-    else
-      Item.Modified := 0;
-
-    // get MD5 hash
-    Value := Channels.Elements[Index].Items['MD5'];
-    if Assigned(Value) then
-      Item.MD5 := Value.AsString;
-
-    FItems.Add(Item);
+  for I := 0 to FItems.Count - 1 do begin
+    VItem := TWebUpdateChannelItem(FItems[I]);
+    if SameText(VItem.Name, AChannelName) then begin
+      Result := VItem;
+      Exit;
+    end;
   end;
 end;
 
-procedure TWebUpdateChannels.Write(Root: TdwsJSONObject);
-var
-  Value: TdwsJSONObject;
-  Channels: TdwsJSONArray;
-  Item: TWebUpdateChannelItem;
-begin
-  inherited;
-
-  Root.AddValue('Modified').AsString := DateTimeToISO8601(Now);
-  Channels := Root.AddArray('Channels');
-  for Item in FItems do
-  begin
-    Value := TdwsJSONObject(Channels.AddObject);
-    Value.AddValue('Name').AsString := Item.Name;
-
-    // eventually store file name (if not identical to Name + '.json')
-    if not (Item.FileName = Item.Name + '/' + Item.Name + '.json') then
-      if not (Item.FileName = '') then
-        Value.AddValue('FileName').AsString := Item.FileName;
-
-    // eventually store file modification date
-    if Item.Modified > 0 then
-      Value.AddValue('Modified').AsString := DateTimeToISO8601(Item.Modified);
-
-    // eventually store MD5 hash
-    if Item.MD5 <> '' then
-      Value.AddValue('MD5').AsString := Item.MD5;
-  end;
-end;
+initialization
+  TJSONSerializer.RegisterClassForJSON(TWebUpdateChannels);
+  TJSONSerializer.RegisterClassForJSON(TWebUpdateChannelItem);
 
 end.

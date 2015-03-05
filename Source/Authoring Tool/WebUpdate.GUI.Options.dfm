@@ -1,8 +1,8 @@
-object FormOptions: TFormOptions
+object frmOptions: TfrmOptions
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Options'
+  Caption = 'Project Options'
   ClientHeight = 305
   ClientWidth = 525
   Color = clBtnFace
@@ -28,9 +28,6 @@ object FormOptions: TFormOptions
     object TabSheetMain: TTabSheet
       Caption = 'Main'
       TabVisible = False
-      DesignSize = (
-        309
-        262)
       object LabelFileName: TLabel
         Left = 3
         Top = 11
@@ -45,38 +42,57 @@ object FormOptions: TFormOptions
         Height = 13
         Caption = 'Channel Filename:'
       end
-      object EditChannelFileName: TJvFilenameEdit
-        Left = 3
-        Top = 75
-        Width = 303
-        Height = 21
-        OnAfterDialog = EditChannelFileNameAfterDialog
-        Filter = 'JSON files (*.json)|*.json'
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 0
-      end
-      object EditBaseDirectory: TJvDirectoryEdit
-        Left = 3
-        Top = 27
-        Width = 303
-        Height = 21
-        DialogKind = dkWin32
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 1
-      end
       object CheckBoxMD5: TCheckBox
         Left = 3
         Top = 112
         Width = 118
         Height = 17
         Caption = 'Use MD5 Checksums'
+        TabOrder = 0
+      end
+      object edtBaseDir: TEdit
+        Left = 3
+        Top = 30
+        Width = 279
+        Height = 21
+        TabOrder = 1
+        Text = 'edtBaseDir'
+      end
+      object btnBaseDir: TButton
+        Left = 288
+        Top = 30
+        Width = 21
+        Height = 21
+        Caption = '...'
         TabOrder = 2
+        OnClick = btnBaseDirClick
+      end
+      object edtChannelFile: TEdit
+        Left = 3
+        Top = 78
+        Width = 278
+        Height = 21
+        TabOrder = 3
+        Text = 'edtChannelFile'
+      end
+      object btnChannelFile: TButton
+        Left = 287
+        Top = 78
+        Width = 21
+        Height = 21
+        Caption = '...'
+        TabOrder = 4
+        OnClick = btnChannelFileClick
       end
     end
     object TabSheetFTP: TTabSheet
       Caption = 'Copy / Upload'
       ImageIndex = 1
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object CheckBoxAutoCopyUpload: TCheckBox
         Left = 0
         Top = 0
@@ -237,5 +253,11 @@ object FormOptions: TFormOptions
       ModalResult = 2
       TabOrder = 1
     end
+  end
+  object dlgOpenChannelFile: TOpenDialog
+    Filter = 'JSON files (*.json)|*.json'
+    Options = [ofEnableSizing]
+    Left = 8
+    Top = 272
   end
 end
