@@ -83,13 +83,9 @@ procedure TUpdaterThread.HttpWork(
   const AEncoding: string
 );
 begin
-  // check whether a HTTP client is assigned
-  if not Assigned(FHttp) then
+  if not Assigned(FHttp) or not Assigned(FOnProgress) then begin
     Exit;
-
-  // check whether a progress event is assigned
-  if not Assigned(FOnProgress) then
-    Exit;
+  end;
 
   FCurrentContentLength := AContentLength;
 

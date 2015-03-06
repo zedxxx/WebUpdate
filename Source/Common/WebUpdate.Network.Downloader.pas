@@ -21,6 +21,7 @@ type
   public
     function Get(const AUrl: string; AResp: TStream): Integer; overload; virtual; abstract;
     function Get(const AUrl: string; out AText: string): Integer; overload; virtual; abstract;
+    procedure Disconnect; virtual; abstract;
   end;
 
 implementation

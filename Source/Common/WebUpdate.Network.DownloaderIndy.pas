@@ -24,6 +24,7 @@ type
   public
     function Get(const AUrl: string; AResp: TStream): Integer; overload; override;
     function Get(const AUrl: string; out AText: string): Integer; overload; override;
+    procedure Disconnect;
   end;
 
 implementation
@@ -56,6 +57,7 @@ destructor TDownloaderIndy.Destroy;
 begin
   FHttp.IOHandler.Free;
   FreeAndNil(FHttp);
+  inherited Destroy;
 end;
 
 function TDownloaderIndy.Get(const AUrl: string; AResp: TStream): Integer;
@@ -82,6 +84,11 @@ begin
     FHttp.Response.ContentLength,
     FHttp.Response.ContentEncoding
   );
+end;
+
+procedure TDownloaderIndy.Disconnect;
+begin
+  FHttp.Disconnect;
 end;
 
 end.

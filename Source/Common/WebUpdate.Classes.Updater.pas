@@ -105,11 +105,9 @@ end;
 
 destructor TWebUpdater.Destroy;
 begin
-  // eventually terminate file download thread
   if Assigned(FThread) then
     FThread.Terminate;
 
-  // free objects
   FFileItemListCache.Free;
 
   FChannels.Free;
@@ -152,7 +150,6 @@ begin
 
   FTotalSize := 0;
 
-  // eventually load existing setup
   if FileExists(FLocalChannelFileName) then begin
     LocalSetup := TWebUpdateChannelSetup.Create;
     try
