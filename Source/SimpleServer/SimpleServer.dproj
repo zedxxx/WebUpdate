@@ -1,7 +1,8 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{088360a3-3002-4c41-979e-2d8ebc28787f}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
     <DCC_DependencyCheckOutputName>..\..\Binaries\SimpleServer.exe</DCC_DependencyCheckOutputName>
@@ -27,6 +28,7 @@
     <DCC_DcuOutput>..\..\DCU</DCC_DcuOutput>
     <DCC_ObjOutput>..\..\DCU</DCC_ObjOutput>
     <DCC_HppOutput>..\..\DCU</DCC_HppOutput>
+    <DCC_MapFile>3</DCC_MapFile>
   </PropertyGroup>
   <ProjectExtensions>
     <Borland.Personality>Delphi.Personality</Borland.Personality>

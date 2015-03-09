@@ -6,6 +6,8 @@ uses
   Windows,
   SysUtils,
   Classes,
+  IdSys,
+  IdObjs,
   IdFTPList,
   IdFTPServer,
   IdBaseComponent,
@@ -20,6 +22,7 @@ type
     function ReplaceChars(const APath: string): string;
     function GetSizeOfFile(const AFile: TFileName): Integer;
   private
+    procedure OnStatus(ASender: TIdFTPServerContext; AStatusInfo: TIdStrings);
     procedure OnUserLogin(ASender: TIdFTPServerContext; const AUsername, APassword: string; var AAuthenticated: Boolean);
     procedure OnRemoveDirectory(ASender: TIdFTPServerContext; var VDirectory: string);
     procedure OnMakeDirectory(ASender: TIdFTPServerContext; var VDirectory: string);
@@ -29,6 +32,7 @@ type
     procedure OnListDirectory(ASender: TIdFTPServerContext; const APath: string; ADirectoryListing: TIdFTPListOutput; const ACmd, ASwitches: string);
     procedure OnDeleteFile(ASender: TIdFTPServerContext; const APathName: string);
     procedure OnChangeDirectory(ASender: TIdFTPServerContext; var VDirectory: string);
+    procedure OnSetModifiedTime(ASender: TIdFTPServerContext; const AFileName: string; var AFileTime: TIdDateTime);
   public
     constructor Create(
       const ARootPath: TFileName;
@@ -38,6 +42,10 @@ type
   end;
 
 implementation
+
+uses
+  SynLog,
+  SynCommons;
 
 { TFtpServer }
 
@@ -51,38 +59,9 @@ begin
   FRootPath := IncludeTrailingPathDelimiter(ARootPath);
 
   FServer := TIdFTPServer.Create(nil);
-  
+
   with FServer do begin
     DefaultPort := APortNumber;
-    
-    {
-    ExceptionReply.Code := '500';
-    ExceptionReply.Text.Add('Unknown Internal Error');
-
-    Greeting.Code := '220';
-    Greeting.Text.Add('Indy FTP Server ready.');
-
-    HelpReply.Text.Add('Help follows');
-
-    MaxConnectionReply.Code := '300';
-    MaxConnectionReply.Text.Add('Too many connections. Try again later.');
-
-    ReplyUnknownCommand.Code := '500';
-    ReplyUnknownCommand.Text.Add('Syntax error, command unrecognized.');
-
-    AllowAnonymousLogin := True;
-    AnonymousAccounts.Add('anonymous');
-    AnonymousAccounts.Add('ftp');
-    AnonymousAccounts.Add('guest');
-    AnonymousPassStrictCheck := False;
-
-    SystemType := 'WIN32';
-
-    MLSDFacts := [];
-
-    ReplyUnknownSITCommand.Code := '500';
-    ReplyUnknownSITCommand.Text.Add('Invalid SITE command.');
-    }
 
     OnChangeDirectory := Self.OnChangeDirectory;
     OnGetFileSize := Self.OnGetFileSize;
@@ -93,11 +72,13 @@ begin
     OnStoreFile := Self.OnStoreFile;
     OnMakeDirectory := Self.OnMakeDirectory;
     OnRemoveDirectory := Self.OnRemoveDirectory;
+    OnSetModifiedTime := Self.OnSetModifiedTime;
+    OnStat := Self.OnStatus;
 
     Active := True;
   end;
 
-  Writeln('[INFO] FTP server: ftp://127.0.0.1:' + IntToStr(APortNumber) + '/');
+  TSynLog.Add.Log(sllInfo, StringToUTF8('Started FTP server on ftp://127.0.0.1:' + IntToStr(APortNumber) + '/'));
 end;
 
 destructor TFtpServer.Destroy;
@@ -129,6 +110,14 @@ begin
   end;
 end;
 
+procedure TFtpServer.OnStatus(ASender: TIdFTPServerContext; AStatusInfo: TIdStrings);
+var
+  VLines: RawUTF8;
+begin
+  VLines := StringToUTF8(AStatusInfo.Text);
+  TSynLog.Add.LogLines(sllDebug, PUTF8Char(VLines));
+end;
+
 procedure TFtpServer.OnChangeDirectory(ASender: TIdFTPServerContext;
   var VDirectory: string);
 begin  
@@ -141,7 +130,10 @@ end;
 procedure TFtpServer.OnDeleteFile(ASender: TIdFTPServerContext;
   const APathName: string);
 begin
-  DeleteFile(ReplaceChars(FRootPath + ASender.CurrentDir + PathDelim + APathName));
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp delete file: ' + APathName));
+  if not DeleteFile(ReplaceChars(FRootPath + ASender.CurrentDir + PathDelim + APathName)) then begin
+    RaiseLastOSError;
+  end;
 end;
 
 procedure TFtpServer.OnListDirectory(ASender: TIdFTPServerContext;
@@ -151,6 +143,7 @@ var
   LFTPItem: TIdFTPListItem;
   SR: TSearchRec;
 begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp list dir: ' + APath));
   ADirectoryListing.DirFormat := doUnix;
   if FindFirst(ReplaceChars(FRootPath + APath + '\*.*'), faAnyFile, SR) = 0 then
   try
@@ -172,11 +165,17 @@ end;
 
 procedure TFtpServer.OnStoreFile(ASender: TIdFTPServerContext;
   const AFileName: string; AAppend: Boolean; var VStream: TStream);
+var
+  VFileName: string;
 begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp store file: ' + AFileName));
+  VFileName := ReplaceChars(FRootPath + AFilename);
+  if not ForceDirectories(ExtractFilePath(VFileName)) then
+    RaiseLastOSError;
   if not Aappend then
-    VStream := TFileStream.Create(ReplaceChars(FRootPath + AFilename), fmCreate)
+    VStream := TFileStream.Create(VFileName, fmCreate)
   else
-    VStream := TFileStream.Create(ReplaceChars(FRootPath + AFilename), fmOpenWrite);
+    VStream := TFileStream.Create(VFileName, fmOpenReadWrite);
 end;
 
 procedure TFtpServer.OnGetFileSize(ASender: TIdFTPServerContext;
@@ -184,6 +183,7 @@ procedure TFtpServer.OnGetFileSize(ASender: TIdFTPServerContext;
 var
   LFile : string;
 begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp get file size: ' + AFilename));
   LFile := ReplaceChars(FRootPath + AFilename);
   try
     if FileExists(LFile) then
@@ -198,12 +198,14 @@ end;
 procedure TFtpServer.OnRetrieveFile(ASender: TIdFTPServerContext;
   const AFileName: string; var VStream: TStream);
 begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp retrieve file: ' + AFileName));
   VStream := TFileStream.Create(ReplaceChars(FRootPath+AFilename),fmOpenRead);
 end;
 
 procedure TFtpServer.OnMakeDirectory(ASender: TIdFTPServerContext;
   var VDirectory: string);
 begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp make dir: ' + VDirectory));
   if not ForceDirectories(ReplaceChars(FRootPath + VDirectory)) then begin
     RaiseLastOSError;
   end;
@@ -250,6 +252,7 @@ procedure TFtpServer.OnRemoveDirectory(ASender: TIdFTPServerContext;
 var
   LFile : string;
 begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp remove dir: ' + VDirectory));
   LFile := ReplaceChars(FRootPath + VDirectory);
   FullRemoveDir(LFile, True);
 end;
@@ -257,9 +260,22 @@ end;
 procedure TFtpServer.OnUserLogin(ASender: TIdFTPServerContext;
   const AUsername, APassword: string; var AAuthenticated: Boolean);
 begin
-  // We just set AAuthenticated to true so any username / password is accepted
-  // You should check them here - AUsername and APassword
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp user login: ' + AUsername + '@' + APassword));
   AAuthenticated := True;
+end;
+
+procedure TFtpServer.OnSetModifiedTime(ASender: TIdFTPServerContext;
+  const AFileName: string; var AFileTime: TIdDateTime);
+var
+  VFileName: string;
+begin
+  TSynLog.Add.Log(sllDebug, StringToUTF8('ftp set file date: ' + AFileName));
+  VFileName := ReplaceChars(FRootPath + AFilename);
+  if FileExists(VFileName) then begin
+    if FileSetDate(VFileName, DateTimeToFileDate(AFileTime)) <> 0 then begin
+      RaiseLastOSError;
+    end;
+  end;
 end;
 
 end.
