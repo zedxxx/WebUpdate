@@ -103,7 +103,7 @@ uses
   Updater.CmdLine.Processor;
 
 resourcestring
-  rsBaseURL = 'http://127.0.0.1/snapshots/';
+  rsBaseURL = 'http://127.0.0.1/';
   rsDownloadProgressInfo = '%s %.2f of %.2f MiB (%.2f%s)';
 
 resourcestring

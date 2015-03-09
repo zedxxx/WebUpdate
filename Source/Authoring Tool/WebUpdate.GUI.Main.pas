@@ -208,7 +208,7 @@ begin
       Result:=(Result xor Ord(s[i]))*16777619;
 end;
 
-{ TFormWebUpdateTool }
+{ TfrmMain }
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
@@ -1091,7 +1091,7 @@ var
   NodeData: PChannelItem;
 begin
   // only continue if an FTP server is supplied
-  if Project.FTP.Server = '' then
+  if FProject.FTP.Server = '' then
     Exit;
 
   // get currently checked channel node
@@ -1100,9 +1100,11 @@ begin
     Exit;
 
   ChannelName := NodeData^.Name;
-  ChannelFileName := Project.ChannelsPath +
+  
+  ChannelFileName := FProject.ChannelsPath +
     ExtractFileName(WebToLocalFileName(NodeData^.FileName));
-  ChannelWebName := ChannelName + '/' + NodeData^.FileName;
+
+  ChannelWebName := ExtractFileName(ChannelFileName);
 
   with TIdFTP.Create(nil) do
   try
@@ -1110,9 +1112,11 @@ begin
     OnWorkBegin := WorkBeginEventHandler;
     OnWorkEnd := WorkEndEventHandler;
     OnStatus := StatusEventHandler;
-    Host := Project.FTP.Server;
-    Username := Project.FTP.Username;
-    Password := Project.FTP.Password;
+
+    Host := FProject.FTP.Server;
+    Username := FProject.FTP.Username;
+    Password := FProject.FTP.Password;
+
     Connect;
     try
       // upload files
@@ -1126,20 +1130,23 @@ begin
           if MessageDlg('Time stamp mismatch. Continue?', mtWarning, [mbYes, mbNo], 0) = mrNo then
             Exit;
 
-        for I := 0 to ChannelSetup.Items.Count - 1 do
-        begin
+        for I := 0 to ChannelSetup.Items.Count - 1 do begin
           FileItem := TWebUpdateFileItem(ChannelSetup.Items[I]);
 
           WriteStatus('Uploading: ' + FileItem.FileName);
 
           // upload file
-          RealFileName := Project.BasePath + WebToLocalFileName(FileItem.FileName);
+          RealFileName := FProject.BasePath + ChannelName + PathDelim +
+            WebToLocalFileName(FileItem.FileName);
+
           Put(RealFileName, ChannelName + '/' + FileItem.FileName);
 
           // now try to update time stamp
           try
             SetModTime(ChannelName + '/' + FileItem.FileName, FileItem.Modified);
-          except end;
+          except
+
+          end;
         end;
       finally
         ChannelSetup.Free;
@@ -1151,7 +1158,9 @@ begin
       Put(ChannelFileName, ChannelWebName);
       try
         SetModTime(ChannelWebName, NodeData^.Modified);
-      except end;
+      except
+
+      end;
 
       WriteStatus('Uploading channels list...');
 
