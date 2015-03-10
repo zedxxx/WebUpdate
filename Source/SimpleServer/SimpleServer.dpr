@@ -7,31 +7,33 @@ uses
   SynCommons,
   SynLog,
   Simple.HTTP.Server in 'Simple.HTTP.Server.pas',
-  Simple.FTP.Server in 'Simple.FTP.Server.pas';
+  Simple.FTP.Server in 'Simple.FTP.Server.pas',
+  Server.CmdLine.Processor in 'Server.CmdLine.Processor.pas',
+  ArgumentParser in '..\..\Utils\ArgumentParser.pas';
 
-const
-  cDefFtpPort = 21;
-  cDefHttpPort = 80;
-
-procedure Main;
+procedure Main(var AParams: TParams);
 var
-  VRoot: TFileName;
   VFtpServer: TFtpServer;
   VHttpServer: THttpServer;
 begin
   TSynLog.Add.Log(sllInfo, StringToUTF8('SimpleServer started'));
-
-  VRoot := ExtractFilePath(ParamStr(0)) + 'SimpleServerRoot' + PathDelim;
-
-  if not ForceDirectories(VRoot) then begin
+  TSynLog.Add.Log(sllInfo, StringToUTF8('Root path: ' + AParams.RootPath));
+  
+  if not ForceDirectories(AParams.RootPath) then begin
     RaiseLastOSError;
   end;
 
-  TSynLog.Add.Log(sllInfo, StringToUTF8('Root path: ' + VRoot));
-
-  VFtpServer := TFtpServer.Create(VRoot, cDefFtpPort);
+  if AParams.FtpServ then begin
+    VFtpServer := TFtpServer.Create(AParams.RootPath, AParams.FtpPort);
+  end else begin
+    VFtpServer := nil;
+  end;
   try
-    VHttpServer := THttpServer.Create(VRoot, cDefHttpPort);
+    if AParams.HttpServ then begin
+      VHttpServer := THttpServer.Create(AParams.RootPath, AParams.HttpPort);
+    end else begin
+      VHttpServer := nil;
+    end;
     try
       TSynLog.Add.Log(sllInfo, StringToUTF8('Press [ENTER] to exit'));
       Readln;
@@ -43,15 +45,21 @@ begin
   end;
 end;
 
+var
+  VParams: TParams;
 begin
   try
     with TSynLog.Family do begin
       Level := LOG_VERBOSE;
       EchoToConsole := LOG_VERBOSE;
       NoFile := True;
-      WithUnitName := True; // you must set detailed Map file generation in proj options
+      WithUnitName := True; // you must set Detailed Map File generation in proj options
     end;
-    Main;
+    if ReadParameters(VParams) then begin
+      Main(VParams);
+    end else begin
+      Writeln(GetHelpText(ExtractFileName(ParamStr(0))));
+    end;
   except
     on E:Exception do
       Writeln(E.Classname, ': ', E.Message);

@@ -41,6 +41,8 @@
     <DelphiCompile Include="SimpleServer.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="..\..\Utils\ArgumentParser.pas" />
+    <DCCReference Include="Server.CmdLine.Processor.pas" />
     <DCCReference Include="Simple.FTP.Server.pas" />
     <DCCReference Include="Simple.HTTP.Server.pas" />
   </ItemGroup>
